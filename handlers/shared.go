@@ -2,28 +2,53 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"net/http"
+	"strings"
 
 	"github.com/a-h/templ"
 )
 
 type HTTPHandler func(w http.ResponseWriter, r *http.Request) error
 
-func Make(h HTTPHandler) http.HandlerFunc {
+func Make(h HTTPHandler, c templ.Component) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if err := h          (w, r); err != nil {
-			if apiErr, ok := err.(APIError); ok {
-				writeJSON(w, apiErr.StatusCode, apiErr)
-			} else {
-				errResp := map[string]any{
-					"statusCode": http.StatusInternalServerError,
-					"msg":        "internal server error",
-				}
-				writeJSON(w, http.StatusInternalServerError, errResp)
-			}
-			slog.Error("HTTP handler error", "err", err, "path", r.URL.Path)
+		accepts := r.Header.Get("Accept")
+		if strings.Contains(accepts, "application/json") {
+			makeJSON(h, w, r)
+		} else {
+			makeHTMX(h, w, r, c)
 		}
+	}
+}
+
+func makeHTMX(h HTTPHandler, w http.ResponseWriter, r *http.Request, c templ.Component) {
+	if err := h(w, r); err != nil {
+		fmt.Println(err.Error())
+		// TODO get errors from APIError
+		if _, ok := err.(APIError); ok {
+			c.Render(r.Context(), w)
+		} else {
+			c.Render(r.Context(), w)
+		}
+		slog.Error("HTTP handler error", "err", err, "path", r.URL.Path)
+	}
+
+}
+
+func makeJSON(h HTTPHandler, w http.ResponseWriter, r *http.Request) {
+	if err := h(w, r); err != nil {
+		if apiErr, ok := err.(APIError); ok {
+			writeJSON(w, apiErr.StatusCode, apiErr)
+		} else {
+			errResp := map[string]any{
+				"statusCode": http.StatusInternalServerError,
+				"msg":        "internal server error",
+			}
+			writeJSON(w, http.StatusInternalServerError, errResp)
+		}
+		slog.Error("HTTP handler error", "err", err, "path", r.URL.Path)
 	}
 }
 

@@ -1,28 +1,30 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/TimRobillard/handicap_tracker/views/auth"
+	"github.com/TimRobillard/handicap_tracker/views/errors"
 	"github.com/go-chi/chi/v5"
 )
 
 func RegisterAuthRoutes(router *chi.Mux) {
-	router.Get("/register", Make(handleRegister))
-	router.Post("/register", Make(handlePostRegister))
+	router.Get("/register", Make(handleRegister, errors.ApiError()))
+	router.Post("/register", Make(handlePostRegister, errors.ApiError()))
 }
 
 type RegisterRequest struct {
 	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 func handlePostRegister(w http.ResponseWriter, r *http.Request) error {
-	var req RegisterRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		return InvalidJSON()
-	}
-	return nil
+	return NotImplementedError()
+	// username := r.FormValue("username")
+	// password := r.FormValue("password")
+
+	// if len(username) ==
+	// return nil
 }
 
 func handleRegister(w http.ResponseWriter, r *http.Request) error {

@@ -6,7 +6,7 @@ import (
 )
 
 type APIError struct {
-	StatusCode int    `json:"statusCode"`
+	StatusCode int `json:"statusCode"`
 	Msg        any `json:"msg"`
 }
 
@@ -24,10 +24,14 @@ func NewAPIError(statusCode int, err error) APIError {
 func BadRequestError(errors map[string]string) APIError {
 	return APIError{
 		StatusCode: http.StatusUnprocessableEntity,
-		Msg: errors,
+		Msg:        errors,
 	}
 }
 
 func InvalidJSON() APIError {
 	return NewAPIError(http.StatusBadRequest, fmt.Errorf("invalid JSON request data"))
+}
+
+func NotImplementedError() APIError {
+	return NewAPIError(http.StatusNotImplemented, fmt.Errorf("not implemented"))
 }
