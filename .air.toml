@@ -8,7 +8,6 @@ tmp_dir = "tmp"
   delay = 20
   exclude_dir = ["assets", "tmp", "vendor"]
   exclude_file = []
-  exclude_regex = [".*_templ.go"]
   exclude_unchanged = false
   follow_symlink = false
   full_bin = ""
