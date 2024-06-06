@@ -1,10 +1,20 @@
 package auth
 
 import (
+	"github.com/TimRobillard/handicap_tracker/errors"
 	"github.com/TimRobillard/handicap_tracker/views/layout"
+	"strings"
 )
 
-templ Register() {
+templ UsernameTaken(u string) {
+	<p class="text-red-400 text-center">Username <strong>{ strings.Title(u) }</strong> taken</p>
+}
+
+templ BadLogin(e errors.APIError) {
+	<p class="text-red-400 text-center">{ e.Msg } </p>
+}
+
+templ Login() {
 	@layouts.Base() {
 		<div class="flex flex-col items-center pt-4">
 			<h1 class="text-center font-bold text-4xl my-4">
@@ -12,8 +22,8 @@ templ Register() {
 			</h1>
 			<form
 				hx-ext="loading-states, response-targets"
-				hx-post="/auth/register"
-				hx-target-4*="#register-errors"
+				hx-post="/auth/login"
+				hx-target-401="#login-errors"
 				class="flex flex-col gap-4 md:border border-slate-300 sm:w-full md:shadow-md md:w-[696px] p-4 w-full rounded-md mb-4"
 			>
 				<input
@@ -33,7 +43,7 @@ templ Register() {
 					value=""
 					placeholder="password"
 				/>
-				<div id="register-errors"></div>
+				<div id="login-errors"></div>
 				<button
 					type="submit"
 					class="px-4 py-2 bg-blue-400 text-white rounded-md sm:w-full"
@@ -44,8 +54,9 @@ templ Register() {
 					<span data-loading>Loading</span>
 				</button>
 			</form>
-			<p>Have an account?</p>
-			<p><a href="/login" class="text-blue-300">login</a> instead!</p>
+			<p>Don't have an account?</p>
+			<p>Click <a href="/register" class="text-blue-300">here</a> to register!</p>
+			<div class="hidden opacity-80">generate tailwind classed</div>
 		</div>
 	}
 }

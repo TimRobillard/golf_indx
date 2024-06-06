@@ -1,4 +1,4 @@
-package handlers
+package errors
 
 import (
 	"fmt"
@@ -6,8 +6,9 @@ import (
 )
 
 type APIError struct {
-	StatusCode int `json:"statusCode"`
-	Msg        any `json:"msg"`
+	StatusCode int               `json:"statusCode"`
+	Msg        string            `json:"msg"`
+	Context    map[string]string `json:"context"`
 }
 
 func (e APIError) Error() string {
@@ -21,10 +22,11 @@ func NewAPIError(statusCode int, err error) APIError {
 	}
 }
 
-func BadRequestError(errors map[string]string) APIError {
+func BadRequestError(msg string, context map[string]string) APIError {
 	return APIError{
 		StatusCode: http.StatusUnprocessableEntity,
-		Msg:        errors,
+		Msg:        msg,
+		Context:    context,
 	}
 }
 

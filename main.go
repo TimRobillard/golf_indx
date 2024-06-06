@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/TimRobillard/handicap_tracker/handlers"
-	"github.com/TimRobillard/handicap_tracker/views/errors"
+	"github.com/TimRobillard/handicap_tracker/views/errorViews"
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
 )
@@ -19,11 +19,13 @@ func main() {
 	router := chi.NewMux()
 
 	router.Handle("/*", public())
-	router.Get("/", handlers.Make(handlers.HandleHome, errors.ApiError()))
+	router.Get("/", handlers.Make(handlers.HandleHome, errorViews.ApiError))
 
 	handlers.RegisterAuthRoutes(router)
 
 	listenAddr := os.Getenv("LISTEN_ADDR")
 	slog.Info("HTTP server started", "listenAddr", listenAddr)
-	http.ListenAndServe(listenAddr, router)
+	if err := http.ListenAndServe(listenAddr, router); err != nil {
+		slog.Info("HTTP server error", "msg", err.Error())
+	}
 }

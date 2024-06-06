@@ -7,12 +7,14 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/TimRobillard/handicap_tracker/errors"
 	"github.com/a-h/templ"
 )
 
 type HTTPHandler func(w http.ResponseWriter, r *http.Request) error
+type ErrorComponent func(e errors.APIError) templ.Component
 
-func Make(h HTTPHandler, c templ.Component) http.HandlerFunc {
+func Make(h HTTPHandler, c ErrorComponent) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		accepts := r.Header.Get("Accept")
 		if strings.Contains(accepts, "application/json") {
@@ -23,14 +25,14 @@ func Make(h HTTPHandler, c templ.Component) http.HandlerFunc {
 	}
 }
 
-func makeHTMX(h HTTPHandler, w http.ResponseWriter, r *http.Request, c templ.Component) {
+func makeHTMX(h HTTPHandler, w http.ResponseWriter, r *http.Request, c ErrorComponent) {
 	if err := h(w, r); err != nil {
 		fmt.Println(err.Error())
 		// TODO get errors from APIError
-		if _, ok := err.(APIError); ok {
-			c.Render(r.Context(), w)
+		if apiErr, ok := err.(errors.APIError); ok {
+			c(apiErr).Render(r.Context(), w)
 		} else {
-			c.Render(r.Context(), w)
+			c(errors.NewAPIError(http.StatusInternalServerError, err)).Render(r.Context(), w)
 		}
 		slog.Error("HTTP handler error", "err", err, "path", r.URL.Path)
 	}
@@ -39,7 +41,7 @@ func makeHTMX(h HTTPHandler, w http.ResponseWriter, r *http.Request, c templ.Com
 
 func makeJSON(h HTTPHandler, w http.ResponseWriter, r *http.Request) {
 	if err := h(w, r); err != nil {
-		if apiErr, ok := err.(APIError); ok {
+		if apiErr, ok := err.(errors.APIError); ok {
 			writeJSON(w, apiErr.StatusCode, apiErr)
 		} else {
 			errResp := map[string]any{
