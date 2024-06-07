@@ -29,7 +29,7 @@ func UsernameTaken(u string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<p class=\"text-red-400 text-center\">Username <strong>")
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 1)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -42,7 +42,7 @@ func UsernameTaken(u string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</strong> taken</p>")
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 2)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -66,7 +66,7 @@ func BadLogin(e errors.APIError) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<p class=\"text-red-400 text-center\">")
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 3)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -79,7 +79,7 @@ func BadLogin(e errors.APIError) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p>")
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 4)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -109,7 +109,7 @@ func Login() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-col items-center pt-4\"><h1 class=\"text-center font-bold text-4xl my-4\">Welcome to Tim's Todo List!</h1><form hx-ext=\"loading-states, response-targets\" hx-post=\"/auth/login\" hx-target-401=\"#login-errors\" class=\"flex flex-col gap-4 md:border border-slate-300 sm:w-full md:shadow-md md:w-[696px] p-4 w-full rounded-md mb-4\"><input id=\"username\" autofocus class=\"border h-auto rounded-md flex-auto p-2\" type=\"text\" name=\"username\" value=\"\" placeholder=\"username\"> <input class=\"border h-auto rounded-md flex-auto p-2\" id=\"password\" type=\"password\" name=\"password\" value=\"\" placeholder=\"password\"><div id=\"login-errors\"></div><button type=\"submit\" class=\"px-4 py-2 bg-blue-400 text-white rounded-md sm:w-full\" data-loading-class=\"opacity-80\" data-loading-disable><span data-loading-class=\"hidden\">Login</span> <span data-loading>Loading</span></button></form><p>Don't have an account?</p><p>Click <a href=\"/register\" class=\"text-blue-300\">here</a> to register!</p><div class=\"hidden opacity-80\">generate tailwind classed</div></div>")
+			templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 5)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
