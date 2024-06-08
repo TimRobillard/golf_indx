@@ -1,0 +1,17 @@
+package errorViews
+
+import "github.com/TimRobillard/handicap_tracker/views/layout"
+
+templ NotFound() {
+	@layouts.Base("Page Not Found | Golf IndX") {
+		<main class="w-screen h-screen flex flex-col justify-start items-center gap-24 mt-36">
+			<div class="flex flex-col gap-4 min-h-96">
+				<div class="flex flex-col">
+					<h1 class="text-9xl font-extrabold text-green-800 text-center">404</h1>
+					<h2 class="text-3xl text-center">Page Not Found</h2>
+				</div>
+			</div>
+			@layouts.Footer()
+		</main>
+	}
+}

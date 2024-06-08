@@ -18,10 +18,12 @@ func main() {
 	}
 	router := chi.NewMux()
 
-	router.Handle("/*", public())
+	router.Handle("/public/*", public())
 	router.Get("/", handlers.Make(handlers.HandleHome, errorViews.ApiError))
 
 	handlers.RegisterAuthRoutes(router)
+
+	router.Get("/*", handlers.Make(handlers.HandleNotFound, nil))
 
 	listenAddr := os.Getenv("LISTEN_ADDR")
 	slog.Info("HTTP server started", "listenAddr", listenAddr)
