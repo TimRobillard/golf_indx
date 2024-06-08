@@ -22,6 +22,7 @@ func main() {
 	router.Get("/", handlers.Make(handlers.HandleHome, errorViews.ApiError))
 
 	handlers.RegisterAuthRoutes(router)
+	handlers.RegisterDashboardRoutes(router)
 
 	router.Get("/*", handlers.Make(handlers.HandleNotFound, nil))
 
