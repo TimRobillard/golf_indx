@@ -1,11 +1,84 @@
 package dashboard
 
-import "github.com/TimRobillard/handicap_tracker/views/layout"
+import (
+	"fmt"
+	"strings"
+	"github.com/TimRobillard/handicap_tracker/views/layout"
+)
+
+templ BigNum(num string) {
+	<span>{ num }</span>
+}
+
+templ Card(title, value, url, fontColor string, loaded bool) {
+	if loaded {
+		<div id={ title } class="bg-white rounded-3xl flex flex-col items-center justify-center">
+			<p class={ fmt.Sprintf("text-5xl font-semibold text-%s", fontColor) }>
+				{ value }
+			</p>
+			<p class="text-slate-600">{ strings.Title(title) }</p>
+		</div>
+	} else {
+		<div class="bg-slate-100 rounded-3xl flex flex-col items-center justify-center" hx-get={ url } hx-trigger="load" hx-swap="outerHTML">
+			<p class="text-5xl font-semibold">
+				<span class="block animate-spin text-slate-500 text-lg">
+					<i class="fa-solid fa-spinner"></i>
+				</span>
+			</p>
+			<p class="text-slate-600">{ strings.Title(title) }</p>
+		</div>
+	}
+}
+
+templ Chart() {
+	<div class="flex items-center justify-center h-full">
+		<canvas id="myChart" height="200px" width="240px"></canvas>
+	</div>
+	<script>
+  const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['', 'May','','June', 'July', ''],
+      datasets: [{
+		label: '',
+        data: [20.1, 20.3, 20.0, 19.2, 18.9, 21],
+        borderWidth: 2,
+      }]
+    },
+		responsive: true,
+    options: {
+		responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+		  min: 18, max: 22
+        }
+      },
+	  fill: 'rgb(22 101 52 )',
+	  elements: {
+		line: {
+		tension: 0.2
+		},
+	  },
+		layout: {
+			padding: 20
+		},
+		plugins: {
+			legend: {
+				display: false,
+			}
+		}
+    }
+  });
+</script>
+}
 
 templ Me() {
 	@layouts.Base("Dashboard | Golf IndX")
 	<main class="h-screen bg-slate-200 w-screen flex flex-col sm:flex-row">
-		<aside class="bg-white w-full sm:w-16 lg:w-1/6 flex flex-col">
+		<aside class="bg-white w-full sm:w-16 lg:w-3/12 flex flex-col">
 			<a href="/" class="text-black font-semibold text-sm pt-2 px-2 sm:p-4 sm:mb-16">Golf IndX</a>
 			<div class="p-2 sm:p-0">
 				<ul class="w-full no-scrollbar overflow-x-scroll sm:overflow-visible flex-1 flex sm:flex-col gap-2 sm:gap-10">
@@ -16,6 +89,52 @@ templ Me() {
 				</ul>
 			</div>
 		</aside>
-		<section class=""><i class="fa-solid fa-arrow-left-long"></i>My IndX</section>
+		<section class="w-full h-screen overflow-scroll">
+			<h2 class="hidden sm:block p-8 font-semibold text-3xl">My IndX</h2>
+			<div class="grid grid-cols-3 md:grid-cols-5 dashboard-rows gap-2 sm:gap-4 p-4 w-full overflow-scroll">
+				@Card("current", "", "/indx/current", "green-800", false)
+				<div class="bg-white rounded-3xl flex flex-col items-center justify-center">
+					<p class="text-5xl font-semibold text-slate-700">92</p>
+					<p class="text-slate-600">Latest Round</p>
+				</div>
+				<div class="bg-white rounded-3xl flex flex-col items-center justify-center">
+					<p class="text-5xl font-semibold text-slate-700">88</p>
+					<p class="text-slate-600">Lowest Round</p>
+				</div>
+				<div class="hidden md:block bg-white rounded-3xl col-span-2 row-span-3 p-4 overflow-y-scroll">
+					<ul>
+						<li>102 | Manderley on the Green</li>
+						<li>92 | Dragonfly</li>
+						<li>96 | Manderley on the Green</li>
+						<li>96 | Cedarhill</li>
+						<li>34 | Amberwood</li>
+						<li>101 | Manderley on the Green</li>
+						<li>100 | Cedarhill</li>
+						<li>98 | Cedarhill</li>
+						<li>94 | Manderley on the Green</li>
+						<li>93 | Manderley on the Green</li>
+						<li>92 | Manderley on the Green</li>
+						<li>102 | Manderley on the Green</li>
+						<li>92 | Dragonfly</li>
+						<li>96 | Manderley on the Green</li>
+						<li>96 | Cedarhill</li>
+						<li>34 | Amberwood</li>
+						<li>101 | Manderley on the Green</li>
+						<li>100 | Cedarhill</li>
+						<li>98 | Cedarhill</li>
+						<li>94 | Manderley on the Green</li>
+						<li>93 | Manderley on the Green</li>
+						<li>92 | Manderley on the Green</li>
+					</ul>
+				</div>
+				@Card("lowest", "", "/indx/lowest", "", false)
+				<div class="bg-white rounded-3xl col-span-2 row-span-2">
+					@Chart()
+				</div>
+				@Card("highest", "", "/indx/highest", "", false)
+				<div class="block md:hidden bg-white rounded-3xl col-span-3 row-span-3">8</div>
+			</div>
+		</section>
+		<div class="hidden text-green-400">generate class</div>
 	</main>
 }

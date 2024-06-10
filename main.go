@@ -23,6 +23,7 @@ func main() {
 
 	handlers.RegisterAuthRoutes(router)
 	handlers.RegisterDashboardRoutes(router)
+	handlers.RegisterIndXRoutes(router)
 
 	router.Get("/*", handlers.Make(handlers.HandleNotFound, nil))
 

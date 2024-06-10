@@ -592,6 +592,22 @@ video {
   position: static;
 }
 
+.col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
+.col-span-3 {
+  grid-column: span 3 / span 3;
+}
+
+.row-span-2 {
+  grid-row: span 2 / span 2;
+}
+
+.row-span-3 {
+  grid-row: span 3 / span 3;
+}
+
 .m-4 {
   margin: 1rem;
 }
@@ -640,6 +656,10 @@ video {
 
 .hidden {
   display: none;
+}
+
+.h-44 {
+  height: 11rem;
 }
 
 .h-56 {
@@ -702,6 +722,20 @@ video {
 .translate-x-0\.5 {
   --tw-translate-x: 0.125rem;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .flex-row {
@@ -785,8 +819,20 @@ video {
   overflow: hidden;
 }
 
+.overflow-scroll {
+  overflow: scroll;
+}
+
 .overflow-x-scroll {
   overflow-x: scroll;
+}
+
+.overflow-y-scroll {
+  overflow-y: scroll;
+}
+
+.rounded-3xl {
+  border-radius: 1.5rem;
 }
 
 .rounded-full {
@@ -805,6 +851,10 @@ video {
   border-width: 1px;
 }
 
+.border-2 {
+  border-width: 2px;
+}
+
 .border-b {
   border-bottom-width: 1px;
 }
@@ -814,9 +864,19 @@ video {
   border-color: rgb(31 41 55 / var(--tw-border-opacity));
 }
 
+.border-green-500 {
+  --tw-border-opacity: 1;
+  border-color: rgb(34 197 94 / var(--tw-border-opacity));
+}
+
 .border-green-800 {
   --tw-border-opacity: 1;
   border-color: rgb(22 101 52 / var(--tw-border-opacity));
+}
+
+.border-red-600 {
+  --tw-border-opacity: 1;
+  border-color: rgb(220 38 38 / var(--tw-border-opacity));
 }
 
 .bg-black {
@@ -855,6 +915,10 @@ video {
 
 .p-2 {
   padding: 0.5rem;
+}
+
+.p-4 {
+  padding: 1rem;
 }
 
 .p-8 {
@@ -986,6 +1050,11 @@ video {
   color: rgb(59 130 246 / var(--tw-text-opacity));
 }
 
+.text-green-400 {
+  --tw-text-opacity: 1;
+  color: rgb(74 222 128 / var(--tw-text-opacity));
+}
+
 .text-green-800 {
   --tw-text-opacity: 1;
   color: rgb(22 101 52 / var(--tw-text-opacity));
@@ -1051,6 +1120,10 @@ video {
   transition-duration: 200ms;
 }
 
+:root {
+  --chart-height: 108px;
+}
+
 [data-loading] {
   display: none;
 }
@@ -1068,6 +1141,32 @@ video {
   /* IE and Edge */
   scrollbar-width: none;
   /* Firefox */
+}
+
+.h-chart {
+  height: var(--chart-height);
+}
+
+.dashboard-rows {
+  grid-template-rows: repeat(4, minmax(0, var(--chart-height)));
+}
+
+@media only screen and (min-width: 476px) {
+  :root {
+    --chart-height: 148px;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .dashboard-rows {
+    grid-template-rows: repeat(6, minmax(0, var(--chart-height)));
+  }
+}
+
+@media only screen and (min-width: 1048px) {
+  :root {
+    --chart-height: 188px;
+  }
 }
 
 .focus-within\:bg-opacity-70:focus-within {
@@ -1155,28 +1254,12 @@ video {
     display: none;
   }
 
-  .sm\:w-1\/6 {
-    width: 16.666667%;
+  .sm\:w-16 {
+    width: 4rem;
   }
 
   .sm\:w-full {
     width: 100%;
-  }
-
-  .sm\:w-1\/12 {
-    width: 8.333333%;
-  }
-
-  .sm\:w-24 {
-    width: 6rem;
-  }
-
-  .sm\:w-12 {
-    width: 3rem;
-  }
-
-  .sm\:w-16 {
-    width: 4rem;
   }
 
   .sm\:min-w-0 {
@@ -1191,12 +1274,12 @@ video {
     flex-direction: column;
   }
 
-  .sm\:justify-start {
-    justify-content: flex-start;
-  }
-
   .sm\:gap-10 {
     gap: 2.5rem;
+  }
+
+  .sm\:gap-4 {
+    gap: 1rem;
   }
 
   .sm\:overflow-visible {
@@ -1257,20 +1340,12 @@ video {
     display: flex;
   }
 
+  .md\:hidden {
+    display: none;
+  }
+
   .md\:w-5\/12 {
     width: 41.666667%;
-  }
-
-  .md\:w-6\/12 {
-    width: 50%;
-  }
-
-  .md\:w-1 {
-    width: 0.25rem;
-  }
-
-  .md\:w-1\/6 {
-    width: 16.666667%;
   }
 
   .md\:max-w-7xl {
@@ -1281,6 +1356,10 @@ video {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .md\:grid-cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
   .md\:flex-row {
     flex-direction: row;
   }
@@ -1289,12 +1368,12 @@ video {
     align-items: center;
   }
 
-  .md\:justify-start {
-    justify-content: flex-start;
-  }
-
   .md\:gap-20 {
     gap: 5rem;
+  }
+
+  .md\:gap-4 {
+    gap: 1rem;
   }
 
   .md\:gap-x-60 {
@@ -1330,11 +1409,15 @@ video {
     display: block;
   }
 
-  .lg\:w-1\/6 {
-    width: 16.666667%;
+  .lg\:w-3\/12 {
+    width: 25%;
   }
 
   .lg\:justify-start {
     justify-content: flex-start;
+  }
+
+  .lg\:gap-4 {
+    gap: 1rem;
   }
 }

@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --chart-height: 108px;
+}
+
 [data-loading] {
   display: none;
 }
@@ -15,4 +19,29 @@
 .no-scrollbar {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+.h-chart {
+  height: var(--chart-height);
+}
+
+.dashboard-rows {
+  grid-template-rows: repeat(4, minmax(0, var(--chart-height)));
+}
+
+@media only screen and (min-width: 476px) {
+  :root {
+    --chart-height: 148px;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .dashboard-rows {
+    grid-template-rows: repeat(6, minmax(0, var(--chart-height)));
+  }
+}
+@media only screen and (min-width: 1048px) {
+  :root {
+    --chart-height: 188px;
+  }
 }
