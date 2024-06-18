@@ -5,51 +5,6 @@ import (
 	"github.com/TimRobillard/handicap_tracker/store"
 )
 
-templ Chart() {
-	<div class="flex items-center justify-center h-full">
-		<canvas id="myChart" height="200px" width="240px"></canvas>
-	</div>
-	<script>
-  const ctx = document.getElementById('myChart');
-
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: ['', 'May','','June', 'July', ''],
-      datasets: [{
-		label: '',
-        data: [20.1, 20.3, 20.0, 19.2, 18.9, 21],
-        borderWidth: 2,
-      }]
-    },
-		responsive: true,
-    options: {
-		responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true,
-		  min: 18, max: 22
-        }
-      },
-	  fill: 'rgb(22 101 52 )',
-	  elements: {
-		line: {
-		tension: 0.2
-		},
-	  },
-		layout: {
-			padding: 20
-		},
-		plugins: {
-			legend: {
-				display: false,
-			}
-		}
-    }
-  });
-</script>
-}
-
 templ Me(indx string, profile_pic *string, rounds [20]store.CalcRound) {
 	<!DOCTYPE html>
 	<html lang="en">
@@ -59,7 +14,6 @@ templ Me(indx string, profile_pic *string, rounds [20]store.CalcRound) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<link rel="stylesheet" href="/public/styles.css"/>
-			// TODO move to own base file for dashboards
 			<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 			<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 			<script src="https://unpkg.com/alpinejs" defer></script>
@@ -70,7 +24,7 @@ templ Me(indx string, profile_pic *string, rounds [20]store.CalcRound) {
 		</head>
 		<body class="antialiased relative bg-slate-200">
 			<main class="relative h-auto min-h-screen w-screen flex flex-col sm:flex-row">
-				<button class="fixed bottom-4 right-4 h-16 w-16 bg-green-800 text-white font-semibold text-sm rounded-full shadow-md hover:shadow-lg hover:bg-green-900"><i class="fa-solid fa-plus text-lg shadow-md"></i></button>
+				<button class="md:hidden fixed bottom-4 right-4 h-16 w-16 bg-green-800 text-white font-semibold text-sm rounded-full shadow-md hover:shadow-lg hover:bg-green-900"><i class="fa-solid fa-plus text-lg shadow-md"></i></button>
 				<aside class="bg-white z-10 w-full sm:w-16 lg:w-3/12 flex flex-col sticky top-0 pt-2 md:p2-0 md:static">
 					<a href="/" class="text-black font-semibold text-sm pt-2 px-2 sm:p-4 sm:mb-16">Golf IndX</a>
 					<div class="p-2 sm:p-0">
@@ -105,13 +59,87 @@ templ Me(indx string, profile_pic *string, rounds [20]store.CalcRound) {
 								}
 							</ul>
 						</div>
-						<div class="bg-white rounded-3xl col-span-3 row-span-2">
-							@Chart()
+						<div class="bg-white rounded-3xl col-span-3 row-span-2 p-4">
+							<span class="md:flex-1 font-semibold text-lg">Indx</span>
+							<div class="flex items-center justify-center h-full">
+								<div id="chart-spinner" class="animate-spin">
+									<i class="fa-solid fa-spinner text-4xl text-green-800"></i>
+								</div>
+								<canvas id="myChart" class="hidden"></canvas>
+								<span id="chart-no-data" class="hidden text-lg text-slate-500 text-center">No Data Found</span>
+							</div>
 						</div>
 					</div>
 				</section>
 				<div class="hidden text-green-400">generate class</div>
 			</main>
 		</body>
+		<script>
+			document.addEventListener('DOMContentLoaded', 
+			async () => {
+				console.log('loaded!')
+				try {
+					const response = await fetch('http://127.0.0.1:7331/dashboard/chart/me', {
+						headers: {
+							"Accept": "application/json"
+						}
+					});
+					const data = await response.json();
+					if (data) {
+					const ctx = document.getElementById('myChart');
+					new Chart(ctx, {
+						type: 'line',
+						data: {
+							labels: data.labels,
+							datasets: [{
+								label: '',
+								data: data.data,
+								borderWidth: 2,
+							}]
+						},
+						responsive: true,
+						options: {
+							fill: {
+								target: 'origin',
+								above: 'rgb(22, 101, 52)',
+							},
+							pointBackgroundColor: '#F2F2F2',
+							pointBorderColor: '#333',
+							pointRadius: 4,
+							borderColor: 'rgb(22, 101, 52)',
+							responsive: true,
+							scales: {
+								y: {
+									beginAtZero: true,
+									min: data.min, max: data.max
+								}
+							},
+							elements: {
+								line: {
+								tension: 0.2
+								},
+							},
+							layout: {
+								padding: 20
+							},
+							plugins: {
+								legend: {
+									display: false,
+								}
+							}
+						}
+					});
+					ctx.classList.remove('hidden')
+					} else {
+						document.getElementById('chart-no-data').classList.remove('hidden')
+					}
+				} catch(e) {
+					console.log(e)
+						document.getElementById('chart-no-data').classList.remove('hidden')
+				} finally {
+					document.getElementById('chart-spinner').remove()
+				}
+			});
+		</script>
 	</html>
 }

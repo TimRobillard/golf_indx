@@ -14,6 +14,7 @@ import (
 func RegisterDashboardRoutes(r *chi.Mux) {
 	d := chi.NewRouter()
 	d.Get("/", Make(handleDashboard, errorViews.ApiError))
+	d.Get("/chart/me", Make(handleChartMe, nil))
 
 	r.Mount("/dashboard", d)
 }
@@ -48,4 +49,21 @@ func handleDashboard(w http.ResponseWriter, r *http.Request) error {
 		{Score: "94", Course: manderley, TimeAgo: "2 days ago"},
 	}
 	return Render(w, r, dashboard.Me("20.3", &profile_pic, rounds))
+}
+
+type Data struct {
+	Labels []string  `json:"labels"`
+	Data   []float32 `json:"data"`
+	Min    int       `json:"min"`
+	Max    int       `json:"max"`
+}
+
+func handleChartMe(w http.ResponseWriter, _r *http.Request) error {
+	data := Data{
+		Labels: []string{"", "May", "June", "", "July", ""},
+		Data:   []float32{20.1, 20.3, 20.0, 19.2, 18.9, 21},
+		Min:    18,
+		Max:    22,
+	}
+	return writeJSON(w, http.StatusOK, data)
 }
