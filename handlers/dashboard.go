@@ -16,5 +16,6 @@ func RegisterDashboardRoutes(r *chi.Mux) {
 }
 
 func handleDashboard(w http.ResponseWriter, r *http.Request) error {
-	return Render(w, r, dashboard.Me())
+	profile_pic := "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg"
+	return Render(w, r, dashboard.Me("20.3", &profile_pic))
 }

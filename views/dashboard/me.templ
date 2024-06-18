@@ -1,33 +1,12 @@
 package dashboard
 
 import (
-	"fmt"
-	"strings"
 	"github.com/TimRobillard/handicap_tracker/views/layout"
+	"github.com/TimRobillard/handicap_tracker/views/components"
 )
 
 templ BigNum(num string) {
 	<span>{ num }</span>
-}
-
-templ Card(title, value, url, fontColor string, loaded bool) {
-	if loaded {
-		<div id={ title } class="bg-white rounded-3xl flex flex-col items-center justify-center">
-			<p class={ fmt.Sprintf("text-5xl font-semibold text-%s", fontColor) }>
-				{ value }
-			</p>
-			<p class="text-slate-600">{ strings.Title(title) }</p>
-		</div>
-	} else {
-		<div class="bg-slate-100 rounded-3xl flex flex-col items-center justify-center" hx-get={ url } hx-trigger="load" hx-swap="outerHTML">
-			<p class="text-5xl font-semibold">
-				<span class="block animate-spin text-slate-500 text-lg">
-					<i class="fa-solid fa-spinner"></i>
-				</span>
-			</p>
-			<p class="text-slate-600">{ strings.Title(title) }</p>
-		</div>
-	}
 }
 
 templ Chart() {
@@ -75,7 +54,7 @@ templ Chart() {
 </script>
 }
 
-templ Me() {
+templ Me(indx string, profile_pic *string) {
 	@layouts.Base("Dashboard | Golf IndX")
 	<main class="h-screen bg-slate-200 w-screen flex flex-col sm:flex-row">
 		<aside class="bg-white w-full sm:w-16 lg:w-3/12 flex flex-col">
@@ -90,16 +69,19 @@ templ Me() {
 			</div>
 		</aside>
 		<section class="w-full h-screen overflow-scroll">
-			<h2 class="hidden sm:block p-8 font-semibold text-3xl">My IndX</h2>
-			<div class="grid grid-cols-3 md:grid-cols-5 dashboard-rows gap-2 sm:gap-4 p-4 w-full overflow-scroll">
-				@Card("current", "", "/indx/current", "green-800", false)
-				<div class="bg-white rounded-3xl flex flex-col items-center justify-center">
-					<p class="text-5xl font-semibold text-slate-700">92</p>
-					<p class="text-slate-600">Latest Round</p>
+			<div class="flex p-8  items-center ">
+				<h2 class="hidden sm:block font-semibold text-3xl">My IndX</h2>
+				<div class="flex-1 text-right ">
+					<button class="h-12 w-12 bg-green-800 text-white font-semibold text-sm rounded-full shadow-md hover:shadow-lg hover:bg-green-900"><i class="fa-solid fa-plus text-lg shadow-md"></i></button>
 				</div>
-				<div class="bg-white rounded-3xl flex flex-col items-center justify-center">
-					<p class="text-5xl font-semibold text-slate-700">88</p>
-					<p class="text-slate-600">Lowest Round</p>
+			</div>
+			<div class="grid grid-cols-3 md:grid-cols-5 dashboard-rows gap-2 sm:gap-4 p-4 w-full overflow-scroll">
+				<div class="col-span-3 flex items-center justify-start gap-4">
+					@components.ProfilePic(indx, profile_pic)
+					<div>
+						<span class="block text-2xl font-semibold">Tim Robillard</span>
+						<span class="block text-slate-700">Low round 92</span>
+					</div>
 				</div>
 				<div class="hidden md:block bg-white rounded-3xl col-span-2 row-span-3 p-4 overflow-y-scroll">
 					<ul>
@@ -127,11 +109,9 @@ templ Me() {
 						<li>92 | Manderley on the Green</li>
 					</ul>
 				</div>
-				@Card("lowest", "", "/indx/lowest", "", false)
-				<div class="bg-white rounded-3xl col-span-2 row-span-2">
+				<div class="bg-white rounded-3xl col-span-3 row-span-2">
 					@Chart()
 				</div>
-				@Card("highest", "", "/indx/highest", "", false)
 				<div class="block md:hidden bg-white rounded-3xl col-span-3 row-span-3">8</div>
 			</div>
 		</section>
