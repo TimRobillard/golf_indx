@@ -1,14 +1,14 @@
 package components
 
 templ ProfilePic(indx string, url *string) {
-	<div class="relative w-32 h-32 rounded-full flex items-center justify-center ">
-		<div class="relative w-32 h-32 overflow-hidden rounded-full flex items-center justify-center shadow-md">
+	<div class="relative w-24 h-24 md:w-36 md:h-36 rounded-full flex items-center justify-center ">
+		<div class="relative w-full h-full overflow-hidden rounded-full flex items-center justify-center shadow-md">
 			if url != nil {
 				<img src={ *url } class="object-cover w-full h-full"/>
 			} else {
 				<img src="/public/images/profile_pic.png" class="object-cover w-full h-full"/>
 			}
 		</div>
-		<span class="absolute bottom-2 bg-white rounded-full px-4 py-1 text-center text-md font-semibold text-green-800 shadow-lg">{ indx }</span>
+		<span class="absolute bottom-1 md:bottom-2 bg-white rounded-full px-2 py-0.5 md:px-4 md:py-1 text-center text-md font-semibold text-green-800 shadow-lg">{ indx }</span>
 	</div>
 }

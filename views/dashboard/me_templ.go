@@ -11,11 +11,11 @@ import "io"
 import "bytes"
 
 import (
+	"github.com/TimRobillard/handicap_tracker/store"
 	"github.com/TimRobillard/handicap_tracker/views/components"
-	"github.com/TimRobillard/handicap_tracker/views/layout"
 )
 
-func BigNum(num string) templ.Component {
+func Chart() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -26,43 +26,6 @@ func BigNum(num string) templ.Component {
 		templ_7745c5c3_Var1 := templ.GetChildren(ctx)
 		if templ_7745c5c3_Var1 == nil {
 			templ_7745c5c3_Var1 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(num)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/me.templ`, Line: 9, Col: 12}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if !templ_7745c5c3_IsBuffer {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
-		}
-		return templ_7745c5c3_Err
-	})
-}
-
-func Chart() templ.Component {
-	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
-		if !templ_7745c5c3_IsBuffer {
-			templ_7745c5c3_Buffer = templ.GetBuffer()
-			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex items-center justify-center h-full\"><canvas id=\"myChart\" height=\"200px\" width=\"240px\"></canvas></div><script>\n  const ctx = document.getElementById('myChart');\n\n  new Chart(ctx, {\n    type: 'line',\n    data: {\n      labels: ['', 'May','','June', 'July', ''],\n      datasets: [{\n\t\tlabel: '',\n        data: [20.1, 20.3, 20.0, 19.2, 18.9, 21],\n        borderWidth: 2,\n      }]\n    },\n\t\tresponsive: true,\n    options: {\n\t\tresponsive: true,\n      scales: {\n        y: {\n          beginAtZero: true,\n\t\t  min: 18, max: 22\n        }\n      },\n\t  fill: 'rgb(22 101 52 )',\n\t  elements: {\n\t\tline: {\n\t\ttension: 0.2\n\t\t},\n\t  },\n\t\tlayout: {\n\t\t\tpadding: 20\n\t\t},\n\t\tplugins: {\n\t\t\tlegend: {\n\t\t\t\tdisplay: false,\n\t\t\t}\n\t\t}\n    }\n  });\n</script>")
@@ -76,7 +39,7 @@ func Chart() templ.Component {
 	})
 }
 
-func Me(indx string, profile_pic *string) templ.Component {
+func Me(indx string, profile_pic *string, rounds [20]store.CalcRound) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -84,16 +47,12 @@ func Me(indx string, profile_pic *string) templ.Component {
 			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var2 == nil {
+			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = layouts.Base("Dashboard | Golf IndX").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"h-screen bg-slate-200 w-screen flex flex-col sm:flex-row\"><aside class=\"bg-white w-full sm:w-16 lg:w-3/12 flex flex-col\"><a href=\"/\" class=\"text-black font-semibold text-sm pt-2 px-2 sm:p-4 sm:mb-16\">Golf IndX</a><div class=\"p-2 sm:p-0\"><ul class=\"w-full no-scrollbar overflow-x-scroll sm:overflow-visible flex-1 flex sm:flex-col gap-2 sm:gap-10\"><li class=\"group min-w-24 sm:min-w-0 sm:w-full p-2 sm:p-0 sm:pl-4 flex bg-green-800 sm:bg-white rounded-full border sm:border-none border-green-800\"><a href=\"#me\" class=\"flex items-center justify-center lg:justify-start text-xs w-full font-semibold text-white sm:text-black group-hover:text-black transition-all\"><i class=\"fa-solid fa-user mr-4 text-white sm:text-green-800 transition-al\"></i><span class=\"block sm:hidden lg:block\">Me</span></a><div class=\"hidden sm:block bg-green-800 w-1 rounded-full translate-x-0.5\"></div></li><li class=\"group min-w-24 sm:min-w-0 sm:w-full p-2 sm:p-0 sm:pl-4 flex bg-white sm:bg-white rounded-full border sm:border-none border-green-800\"><a href=\"#me\" class=\"flex items-center justify-center lg:justify-start text-xs w-full text-slate-500 sm:group-hover:text-black transition-all\"><i class=\"fa-solid fa-user-group mr-4 text-slate-500 sm:group-hover:text-black transition-al\"></i><span class=\"block sm:hidden lg:block\">Friends</span></a><div class=\"hidden sm:group-hover:block bg-opacity-20 bg-green-800 w-1 rounded-full translate-x-0.5\"></div></li><li class=\"group min-w-24 sm:min-w-0 sm:w-full p-2 sm:p-0 sm:pl-4 flex bg-white sm:bg-white rounded-full border sm:border-none border-green-800\"><a href=\"#me\" class=\"flex items-center justify-center lg:justify-start text-xs w-full text-slate-500 sm:group-hover:text-black transition-all\"><i class=\"fa-solid fa-location-dot mr-4 text-slate-500 sm:group-hover:text-black transition-al\"></i><span class=\"block sm:hidden lg:block\">Local</span></a><div class=\"hidden sm:group-hover:block bg-opacity-20 bg-green-800 w-1 rounded-full translate-x-0.5\"></div></li><li class=\"group min-w-24 sm:min-w-0 sm:w-full p-2 sm:p-0 sm:pl-4 flex bg-white sm:bg-white rounded-full border sm:border-none border-green-800\"><a href=\"#me\" class=\"flex items-center justify-center lg:justify-start text-xs w-full text-slate-500 sm:group-hover:text-black transition-all\"><i class=\"fa-solid fa-earth-americas mr-4 text-slate-500 sm:group-hover:text-black transition-al\"></i><span class=\"block sm:hidden lg:block\">Global</span></a><div class=\"hidden sm:group-hover:block bg-opacity-20 bg-green-800 w-1 rounded-full translate-x-0.5\"></div></li></ul></div></aside><section class=\"w-full h-screen overflow-scroll\"><div class=\"flex p-8  items-center \"><h2 class=\"hidden sm:block font-semibold text-3xl\">My IndX</h2><div class=\"flex-1 text-right \"><button class=\"h-12 w-12 bg-green-800 text-white font-semibold text-sm rounded-full shadow-md hover:shadow-lg hover:bg-green-900\"><i class=\"fa-solid fa-plus text-lg shadow-md\"></i></button></div></div><div class=\"grid grid-cols-3 md:grid-cols-5 dashboard-rows gap-2 sm:gap-4 p-4 w-full overflow-scroll\"><div class=\"col-span-3 flex items-center justify-start gap-4\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><title>Dashboard | Golf IndX</title><link rel=\"icon\" type=\"image/x-icon\" href=\"/public/favicon.ico\"><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><link rel=\"stylesheet\" href=\"/public/styles.css\"><script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script><script src=\"https://code.jquery.com/jquery-3.7.1.min.js\" integrity=\"sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=\" crossorigin=\"anonymous\"></script><script src=\"https://unpkg.com/alpinejs\" defer></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js\"></script><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/htmx.org@1.9.12/dist/ext/loading-states.js\"></script><script src=\"https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js\"></script></head><body class=\"antialiased relative bg-slate-200\"><main class=\"relative h-auto min-h-screen w-screen flex flex-col sm:flex-row\"><button class=\"fixed bottom-4 right-4 h-16 w-16 bg-green-800 text-white font-semibold text-sm rounded-full shadow-md hover:shadow-lg hover:bg-green-900\"><i class=\"fa-solid fa-plus text-lg shadow-md\"></i></button><aside class=\"bg-white z-10 w-full sm:w-16 lg:w-3/12 flex flex-col sticky top-0 pt-2 md:p2-0 md:static\"><a href=\"/\" class=\"text-black font-semibold text-sm pt-2 px-2 sm:p-4 sm:mb-16\">Golf IndX</a><div class=\"p-2 sm:p-0\"><ul class=\"w-full no-scrollbar overflow-x-scroll sm:overflow-visible flex-1 flex sm:flex-col gap-2 sm:gap-10\"><li class=\"group min-w-24 sm:min-w-0 sm:w-full p-2 sm:p-0 sm:pl-4 flex bg-green-800 sm:bg-white rounded-full border sm:border-none border-green-800\"><a href=\"#me\" class=\"flex items-center justify-center lg:justify-start text-xs w-full font-semibold text-white sm:text-black group-hover:text-black transition-all\"><i class=\"fa-solid fa-user mr-4 text-white sm:text-green-800 transition-al\"></i><span class=\"block sm:hidden lg:block\">Me</span></a><div class=\"hidden sm:block bg-green-800 w-1 rounded-full translate-x-0.5\"></div></li><li class=\"group min-w-24 sm:min-w-0 sm:w-full p-2 sm:p-0 sm:pl-4 flex bg-white sm:bg-white rounded-full border sm:border-none border-green-800\"><a href=\"#me\" class=\"flex items-center justify-center lg:justify-start text-xs w-full text-slate-500 sm:group-hover:text-black transition-all\"><i class=\"fa-solid fa-user-group mr-4 text-slate-500 sm:group-hover:text-black transition-al\"></i><span class=\"block sm:hidden lg:block\">Friends</span></a><div class=\"hidden sm:group-hover:block bg-opacity-20 bg-green-800 w-1 rounded-full translate-x-0.5\"></div></li><li class=\"group min-w-24 sm:min-w-0 sm:w-full p-2 sm:p-0 sm:pl-4 flex bg-white sm:bg-white rounded-full border sm:border-none border-green-800\"><a href=\"#me\" class=\"flex items-center justify-center lg:justify-start text-xs w-full text-slate-500 sm:group-hover:text-black transition-all\"><i class=\"fa-solid fa-location-dot mr-4 text-slate-500 sm:group-hover:text-black transition-al\"></i><span class=\"block sm:hidden lg:block\">Local</span></a><div class=\"hidden sm:group-hover:block bg-opacity-20 bg-green-800 w-1 rounded-full translate-x-0.5\"></div></li><li class=\"group min-w-24 sm:min-w-0 sm:w-full p-2 sm:p-0 sm:pl-4 flex bg-white sm:bg-white rounded-full border sm:border-none border-green-800\"><a href=\"#me\" class=\"flex items-center justify-center lg:justify-start text-xs w-full text-slate-500 sm:group-hover:text-black transition-all\"><i class=\"fa-solid fa-earth-americas mr-4 text-slate-500 sm:group-hover:text-black transition-al\"></i><span class=\"block sm:hidden lg:block\">Global</span></a><div class=\"hidden sm:group-hover:block bg-opacity-20 bg-green-800 w-1 rounded-full translate-x-0.5\"></div></li></ul></div></aside><section class=\"w-full h-screen\"><div class=\"hidden sm:flex p-8  items-center \"><h2 class=\"font-semibold text-3xl\">My IndX</h2><div class=\"flex-1 text-right \"><button class=\"h-12 w-12 bg-green-800 text-white font-semibold text-sm rounded-full shadow-md hover:shadow-lg hover:bg-green-900\"><i class=\"fa-solid fa-plus text-lg shadow-md\"></i></button></div></div><div class=\"grid grid-cols-3 md:grid-cols-5 dashboard-rows gap-2 sm:gap-4 p-4 w-full\"><div class=\"col-span-3 flex items-center justify-start gap-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -101,7 +60,17 @@ func Me(indx string, profile_pic *string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><span class=\"block text-2xl font-semibold\">Tim Robillard</span> <span class=\"block text-slate-700\">Low round 92</span></div></div><div class=\"hidden md:block bg-white rounded-3xl col-span-2 row-span-3 p-4 overflow-y-scroll\"><ul><li>102 | Manderley on the Green</li><li>92 | Dragonfly</li><li>96 | Manderley on the Green</li><li>96 | Cedarhill</li><li>34 | Amberwood</li><li>101 | Manderley on the Green</li><li>100 | Cedarhill</li><li>98 | Cedarhill</li><li>94 | Manderley on the Green</li><li>93 | Manderley on the Green</li><li>92 | Manderley on the Green</li><li>102 | Manderley on the Green</li><li>92 | Dragonfly</li><li>96 | Manderley on the Green</li><li>96 | Cedarhill</li><li>34 | Amberwood</li><li>101 | Manderley on the Green</li><li>100 | Cedarhill</li><li>98 | Cedarhill</li><li>94 | Manderley on the Green</li><li>93 | Manderley on the Green</li><li>92 | Manderley on the Green</li></ul></div><div class=\"bg-white rounded-3xl col-span-3 row-span-2\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><span class=\"block text-2xl font-semibold\">Tim Robillard</span> <span class=\"block text-slate-700\">Low round 92</span></div></div><div class=\"flex flex-col bg-white rounded-3xl col-start-1 col-end-4 row-start-4 row-end-6 md:col-start-4 md:col-end-6 md:row-start-1 md:row-end-4 p-4 pr-0\"><span class=\"md:flex-1 font-semibold text-lg\">Calculated Rounds</span><ul class=\"md:h-[90%] md:overflow-y-scroll flex flex-col gap-2\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, round := range rounds {
+			templ_7745c5c3_Err = components.CalculatedRound(round).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul></div><div class=\"bg-white rounded-3xl col-span-3 row-span-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -109,7 +78,7 @@ func Me(indx string, profile_pic *string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"block md:hidden bg-white rounded-3xl col-span-3 row-span-3\">8</div></div></section><div class=\"hidden text-green-400\">generate class</div></main>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div></section><div class=\"hidden text-green-400\">generate class</div></main></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -23,7 +23,7 @@ func ProfilePic(indx string, url *string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"relative w-32 h-32 rounded-full flex items-center justify-center \"><div class=\"relative w-32 h-32 overflow-hidden rounded-full flex items-center justify-center shadow-md\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"relative w-24 h-24 md:w-36 md:h-36 rounded-full flex items-center justify-center \"><div class=\"relative w-full h-full overflow-hidden rounded-full flex items-center justify-center shadow-md\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -51,14 +51,14 @@ func ProfilePic(indx string, url *string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><span class=\"absolute bottom-2 bg-white rounded-full px-4 py-1 text-center text-md font-semibold text-green-800 shadow-lg\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><span class=\"absolute bottom-1 md:bottom-2 bg-white rounded-full px-2 py-0.5 md:px-4 md:py-1 text-center text-md font-semibold text-green-800 shadow-lg\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(indx)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/profile_pic.templ`, Line: 12, Col: 131}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/profile_pic.templ`, Line: 12, Col: 161}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
