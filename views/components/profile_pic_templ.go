@@ -23,12 +23,12 @@ func ProfilePic(indx string, url *string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 1)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"relative w-32 h-32 rounded-full flex items-center justify-center \"><div class=\"relative w-32 h-32 overflow-hidden rounded-full flex items-center justify-center shadow-md\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if url != nil {
-			templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 2)
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<img src=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -41,17 +41,17 @@ func ProfilePic(indx string, url *string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 3)
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"object-cover w-full h-full\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 4)
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<img src=\"/public/images/profile_pic.png\" class=\"object-cover w-full h-full\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 5)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><span class=\"absolute bottom-2 bg-white rounded-full px-4 py-1 text-center text-md font-semibold text-green-800 shadow-lg\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -64,7 +64,7 @@ func ProfilePic(indx string, url *string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 6)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
