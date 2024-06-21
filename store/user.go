@@ -4,6 +4,8 @@ import (
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 type User struct {
@@ -74,4 +76,12 @@ func (pg PostgresStore) DeleteUser(id int) error {
 func (u User) ValidatePassword(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(u.password), []byte(password))
 	return err == nil
+}
+
+func (u User) ScoreCardName() string {
+	c := cases.Title(language.Und)
+	if len(u.Username) > 4 {
+		return c.String(u.Username[:4]) + "..."
+	}
+	return c.String(u.Username)
 }

@@ -1,0 +1,90 @@
+package components
+
+import (
+	"fmt"
+	"github.com/TimRobillard/handicap_tracker/store"
+	"strconv"
+)
+
+templ Error(errs []string) {
+	for _, e := range(errs) {
+		<div>{ e }</div>
+	}
+}
+
+templ score(num, par string) {
+	<div class="flex flex-row md:flex-col flex-1 gap-0.5">
+		<label for={ fmt.Sprintf("hole-%s", num) } class="min-w-[15%] bg-green-800 text-center font-semibold text-white flex-1 text-sm">{ num }</label>
+		<label for={ fmt.Sprintf("hole-%s", num) } class="min-w-[15%] bg-sky-600 flex-1 text-white font-semibold text-center text-sm">{ par }</label>
+		<input id={ fmt.Sprintf("hole-%s", num) } name={ fmt.Sprintf("hole-%s", num) } placeholder={ par } class="w-full bg-white flex-2 md:flex-1 text-center font-semibold text-sm" required/>
+		<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white text-sm">_</div>
+		<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white text-sm">_</div>
+		<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white text-sm">_</div>
+	</div>
+}
+
+templ ScoreModal(user store.User, course store.Course) {
+	<div id="add-round-modal-bg" class="fixed hidden h-full w-full bottom-0 top-0 left-0 right-0 bg-black bg-opacity-50 z-20 flex-col items-center justify-center p-4">
+		<div class="w-full max-w-5xl bg-white animate-fade-up rounded-md p-4 flex flex-col gap-4">
+			<h2 class="text-2xl font-semibold text-center">Add Round</h2>
+			<h4 class="text-xl">{ course.Name }</h4>
+			<form
+				id="score-form"
+				class="flex flex-col gap-4"
+				hx-post="/rounds"
+				hx-ext="loading-states, response-targets"
+				hx-target-401="#score-errors"
+			>
+				<div class="flex flex-col md:flex-row bg-slate-900 gap-0.5 p-0.5 rounded-sm">
+					<div class="flex flex-row flex-1 md:flex-col gap-0.5">
+						<div class="min-w-[15%] bg-green-800 font-semibold text-white text-center">Hole</div>
+						<div class="min-w-[15%] bg-sky-600 font-semibold text-white text-center">Par</div>
+						<div class="w-full bg-white font-semibold text-center flex-2 md:flex-1"><span class="block md:hidden">Score</span><span class="hidden md:block">{ user.ScoreCardName() }</span></div>
+						<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
+						<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
+						<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
+					</div>
+					for i, par := range(course.Front) {
+						@score(strconv.Itoa(i+1), strconv.Itoa(par))
+					}
+					<div class="flex flex-row md:flex-col flex-1 gap-0.5">
+						<div class="min-w-[15%] bg-green-800 font-semibold text-white text-center flex-1">Out</div>
+						<div class="min-w-[15%] bg-sky-600 text-center font-semibold text-white flex-1">{ strconv.Itoa(course.FrontPar()) }</div>
+						<div id="score-out" class="w-full bg-white font-semibold text-center flex-2 md:flex-1">0</div>
+						<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
+						<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
+						<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
+					</div>
+				</div>
+				<div class="flex flex-col md:flex-row bg-black gap-0.5 p-0.5 rounded-sm">
+					<div class="flex flex-row flex-1 md:flex-col gap-0.5">
+						<div class="min-w-[15%] bg-green-800 font-semibold text-white text-center">Hole</div>
+						<div class="min-w-[15%] bg-sky-600 font-semibold text-white text-center">Par</div>
+						<div class="w-full bg-white font-semibold text-center flex-2 md:flex-1"><span class="block md:hidden">Score</span><span class="hidden md:block">{ user.ScoreCardName() }</span></div>
+						<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
+						<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
+						<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
+					</div>
+					for i, par := range(course.Back) {
+						@score(strconv.Itoa(i+10), strconv.Itoa(par))
+					}
+					<div class="flex flex-row md:flex-col flex-1 gap-0.5">
+						<div class="min-w-[15%] bg-green-800 font-semibold text-white text-center flex-1">In</div>
+						<div class="min-w-[15%] bg-sky-600 text-center font-semibold text-white flex-1">{ strconv.Itoa(course.BackPar()) }</div>
+						<div id="score-in" class="w-full bg-white font-semibold text-center flex-2 md:flex-1">0</div>
+						<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
+						<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
+						<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
+					</div>
+				</div>
+				<div id="score-errors"></div>
+				<button
+					type="submit"
+					class="flex justify-center bg-green-800 text-white py-2 font-semibold rounded-md hover:bg-green-900 focus-within:bg-green-900 focus-within:outline-green-900"
+					data-loading-class="opacity-80"
+					data-loading-disabl
+				>Save round of&nbsp<span id="save-tot">72</span></button>
+			</form>
+		</div>
+	</div>
+}

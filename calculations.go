@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"sort"
+
+	"github.com/TimRobillard/handicap_tracker/store"
 )
 
 // Calculates the Score Differential for an 18 hole score
@@ -31,16 +33,9 @@ func Calc9HoleDifferential(slope, score, rating, pcc float32) float32 {
 	return (113 / slope) * (score - rating - (pcc / 2)) * 2 // should be + expected score, cannot find this calculation
 }
 
-type Course struct {
-	name   string
-	pars   []int
-	slope  float32
-	rating float32
-}
-
 type Round struct {
 	holes  []int
-	course *Course
+	course *store.Course
 }
 
 func (r Round) CalcScore() float32 {
@@ -52,15 +47,15 @@ func (r Round) CalcScore() float32 {
 }
 
 func (r Round) CalcDifferential() (float32, error) {
-	if len(r.course.pars) == 9 {
-		return Calc9HoleDifferential(r.course.slope, r.CalcScore(), r.course.rating, 0), nil
+	if len(r.course.Back) != 9 && len(r.course.Front) == 9 {
+		return Calc9HoleDifferential(r.course.Slope, r.CalcScore(), r.course.Rating, 0), nil
 	}
-	if len(r.course.pars) == 18 {
+	if len(r.course.Front) == 9 && len(r.course.Back) == 9 {
 
-		return Calc18HoleDifferential(r.course.slope, r.CalcScore(), r.course.rating, 0), nil
+		return Calc18HoleDifferential(r.course.Slope, r.CalcScore(), r.course.Rating, 0), nil
 	}
 
-	return -1, fmt.Errorf("invalid number of holes: %d", len(r.course.pars))
+	return -1, fmt.Errorf("invalid number of holes: %d", len(r.course.Front)+len(r.course.Back))
 }
 
 func average(v []float32) float32 {
@@ -132,35 +127,44 @@ func CalculateHandicap(rounds []Round) (float32, error) {
 }
 
 func Test() {
-	manderleyCN := Course{
-		name:   "Manderley Central North",
-		pars:   []int{5, 3, 5, 3, 4, 3, 5, 4, 4, 5, 4, 4, 3, 5, 4, 3, 4, 4},
-		slope:  110,
-		rating: 67.1,
+	manderleyCN := store.Course{
+		Id: 1,
+		Name:   "Manderley Central North",
+		Front:  [9]int{5, 3, 5, 3, 4, 3, 5, 4, 4},
+		Back:   [9]int{5, 4, 4, 3, 5, 4, 3, 4, 4},
+		Slope:  110,
+		Rating: 67.1,
 	}
-	manderleyNS := Course{
-		name:   "Manderley North South",
-		pars:   []int{5, 4, 4, 3, 5, 4, 3, 4, 4, 4, 4, 3, 4, 4, 3, 5, 3, 5},
-		slope:  112,
-		rating: 65.3,
+	manderleyNS := store.Course{
+		Id: 2,
+		Name:   "Manderley North South",
+		Front:  [9]int{5, 4, 4, 3, 5, 4, 3, 4, 4},
+		Back:   [9]int{4, 4, 3, 4, 4, 3, 5, 3, 5},
+		Slope:  112,
+		Rating: 65.3,
 	}
-	dragonFly := Course{
-		name:   "Dragonfly Golf Links",
-		pars:   []int{4, 4, 4, 4, 3, 5, 3, 4, 5, 4, 5, 4, 3, 4, 5, 4, 4, 3},
-		slope:  123,
-		rating: 69.9,
+	dragonFly := store.Course{
+		Id: 3,
+		Name:   "Dragonfly Golf Links",
+		Front:  [9]int{4, 4, 4, 4, 3, 5, 3, 4, 5},
+		Back:   [9]int{4, 5, 4, 3, 4, 5, 4, 4, 3},
+		Slope:  123,
+		Rating: 69.9,
 	}
-	cedarHill := Course{
-		name:   "Cedarhill",
-		pars:   []int{4, 4, 5, 4, 3, 4, 4, 4, 3, 4, 4, 4, 4, 3, 3, 4, 5, 4},
-		slope:  112,
-		rating: 67.6,
+	cedarHill := store.Course{
+		Id: 4,
+		Name:   "Cedarhill",
+		Front:  [9]int{4, 4, 5, 4, 3, 4, 4, 4, 3},
+		Back:   [9]int{4, 4, 4, 4, 3, 3, 4, 5, 4},
+		Slope:  112,
+		Rating: 67.6,
 	}
-	amberwood := Course{
-		name:   "Amberwood",
-		pars:   []int{3, 4, 4, 3, 4, 3, 3, 4, 4},
-		slope:  99,
-		rating: 31.2,
+	amberwood := store.Course{
+		Id: 5,
+		Name:   "Amberwood",
+		Front:  [9]int{3, 4, 4, 3, 4, 3, 3, 4, 4},
+		Slope:  99,
+		Rating: 31.2,
 	}
 	round1 := Round{
 		holes:  []int{8, 4, 6, 5, 6, 4, 9, 6, 6, 7, 6, 6, 2, 7, 4, 6, 4, 6},

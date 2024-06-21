@@ -22,9 +22,9 @@ templ Me(indx string, profile_pic *string, rounds [20]store.CalcRound) {
 			<script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/loading-states.js"></script>
 			<script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js"></script>
 		</head>
-		<body class="antialiased relative bg-slate-200">
+		<body class="antialiased relative bg-slate-200 overflow-y-scroll">
 			<main class="relative h-auto min-h-screen w-screen flex flex-col sm:flex-row">
-				<button class="md:hidden fixed bottom-4 right-4 h-16 w-16 bg-green-800 text-white font-semibold text-sm rounded-full shadow-md hover:shadow-lg hover:bg-green-900"><i class="fa-solid fa-plus text-lg shadow-md"></i></button>
+				<button class="add-btn sm:hidden fixed bottom-4 right-4 h-16 w-16 bg-green-800 text-white font-semibold text-sm rounded-full shadow-md hover:shadow-lg hover:bg-green-900"><i class="fa-solid fa-plus text-lg shadow-md"></i></button>
 				<aside class="bg-white z-10 w-full sm:w-16 lg:w-3/12 flex flex-col sticky top-0 pt-2 md:p2-0 md:static">
 					<a href="/" class="text-black font-semibold text-sm pt-2 px-2 sm:p-4 sm:mb-16">Golf IndX</a>
 					<div class="p-2 sm:p-0">
@@ -40,7 +40,7 @@ templ Me(indx string, profile_pic *string, rounds [20]store.CalcRound) {
 					<div class="hidden sm:flex p-8  items-center ">
 						<h2 class="font-semibold text-3xl">My IndX</h2>
 						<div class="flex-1 text-right ">
-							<button class="h-12 w-12 bg-green-800 text-white font-semibold text-sm rounded-full shadow-md hover:shadow-lg hover:bg-green-900"><i class="fa-solid fa-plus text-lg shadow-md"></i></button>
+							<button class="add-btn h-12 w-12 bg-green-800 text-white font-semibold text-sm rounded-full shadow-md hover:shadow-lg hover:bg-green-900"><i class="fa-solid fa-plus text-lg shadow-md"></i></button>
 						</div>
 					</div>
 					<div class="grid grid-cols-3 md:grid-cols-5 dashboard-rows gap-2 sm:gap-4 p-4 w-full">
@@ -51,13 +51,17 @@ templ Me(indx string, profile_pic *string, rounds [20]store.CalcRound) {
 								<span class="block text-slate-700">Low round 92</span>
 							</div>
 						</div>
-						<div class="flex flex-col bg-white rounded-3xl col-start-1 col-end-4 row-start-4 row-end-6 md:col-start-4 md:col-end-6 md:row-start-1 md:row-end-4 p-4 pr-0">
-							<span class="md:flex-1 font-semibold text-lg">Calculated Rounds</span>
-							<ul class="md:h-[90%] md:overflow-y-scroll flex flex-col gap-2">
-								for _, round := range(rounds) {
-									@components.CalculatedRound(round)
-								}
-							</ul>
+						<div class="rounded-3xl col-start-1 col-end-4 row-start-4 row-end-6 md:col-start-4 md:col-end-6 md:row-start-1 md:row-end-4">
+							<div class="flex flex-col bg-white rounded-3xl p-4 pr-0.5 md:h-full">
+								<span class="font-semibold text-lg">Calculated Rounds</span>
+								<div class="md:overflow-y-scroll">
+									<ul class="md:h-full sm:overflow-y-scroll flex flex-col gap-2">
+										for _, round := range(rounds) {
+											@components.CalculatedRound(round)
+										}
+									</ul>
+								</div>
+							</div>
 						</div>
 						<div class="bg-white rounded-3xl col-span-3 row-span-2 p-4">
 							<span class="md:flex-1 font-semibold text-lg">Indx</span>
@@ -73,11 +77,20 @@ templ Me(indx string, profile_pic *string, rounds [20]store.CalcRound) {
 				</section>
 				<div class="hidden text-green-400">generate class</div>
 			</main>
+			@components.ScoreModal(store.User{
+				Id:       1,
+				Username: "tim",
+			}, store.Course{
+				Name:   "Manderley Central North",
+				Front:  [9]int{5, 3, 5, 3, 4, 3, 5, 4, 4},
+				Back:   [9]int{5, 4, 4, 3, 5, 4, 3, 4, 4},
+				Slope:  110,
+				Rating: 67.1,
+			})
 		</body>
 		<script>
 			document.addEventListener('DOMContentLoaded', 
 			async () => {
-				console.log('loaded!')
 				try {
 					const response = await fetch('http://127.0.0.1:7331/dashboard/chart/me', {
 						headers: {
@@ -140,6 +153,46 @@ templ Me(indx string, profile_pic *string, rounds [20]store.CalcRound) {
 					document.getElementById('chart-spinner').remove()
 				}
 			});
+			const addBtns = document.querySelectorAll('.add-btn');
+			const addRoundModal = document.getElementById('add-round-modal-bg');
+			const scoreForm = document.getElementById('score-form');
+			const scoreInputs = document.querySelectorAll('#score-form input');
+			const scoreOut = document.getElementById('score-out');
+			const scoreIn = document.getElementById('score-in');
+			const scoreTot = document.getElementById('score-tot');
+			const saveTot = document.getElementById('save-tot');
+
+			addBtns.forEach(btn => {
+				btn.addEventListener('click', () => {
+				console.log('!', addRoundModal)
+					addRoundModal.classList.remove('hidden')
+					addRoundModal.classList.add('flex')
+				})
+			})
+			addRoundModal.addEventListener('click', (el) => {
+				if (el.target.id !== 'add-round-modal-bg') return;
+				addRoundModal.classList.remove('flex')
+				addRoundModal.classList.add('hidden')
+			})
+			scoreForm.addEventListener('input', calculateScore)
+
+			function calculateScore() {
+				let outVal = 0;
+				let inVal = 0;
+				scoreInputs.forEach(input => {
+					const hole = Number(input.id.split('-')[1]);
+					const value = Number(input.value);
+					if (hole < 10) {
+						outVal += value;
+						return;
+					}
+					inVal += value;
+				})
+				scoreOut.innerHTML = outVal;
+				scoreIn.innerHTML = inVal;
+				scoreTot.innerHTML = outVal + inVal;
+				saveTot.innerHTML = outVal + inVal;
+			}
 		</script>
 	</html>
 }
