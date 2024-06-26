@@ -14,6 +14,7 @@ import (
 func RegisterDashboardRoutes(r *chi.Mux) {
 	d := chi.NewRouter()
 	d.Get("/", Make(handleDashboard, errorViews.ApiError))
+	d.Get("/score", Make(handleScore, errorViews.ApiError))
 	d.Get("/chart/me", Make(handleChartMe, nil))
 
 	r.Mount("/dashboard", d)
@@ -49,6 +50,16 @@ func handleDashboard(w http.ResponseWriter, r *http.Request) error {
 		{Score: "94", Course: manderley, TimeAgo: "2 days ago"},
 	}
 	return Render(w, r, dashboard.Me("20.3", &profile_pic, rounds))
+}
+
+func handleScore(w http.ResponseWriter, r *http.Request) error {
+	recents :=
+		[]*store.UICourse{
+			{Id: 1, Name: "Manderley On The Green North South", Thumbnail: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYsa5s9fz-agjYOZtBTJDSaDV_78gxOiRTQw&usqp=CAU", Par: "72"},
+			{Id: 2, Name: "Amberwood Golf Club", Thumbnail: "https://stittsvillecentral.ca/wp-content/uploads/amberwood-village-golf-green.jpg", Par: "32"},
+		}
+
+	return Render(w, r, dashboard.ScorePage(recents))
 }
 
 type Data struct {

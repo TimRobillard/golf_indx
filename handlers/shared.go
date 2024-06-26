@@ -36,7 +36,6 @@ func makeHTMX(h HTTPHandler, w http.ResponseWriter, r *http.Request, c ErrorComp
 		}
 		slog.Error("HTTP handler error", "err", err, "path", r.URL.Path)
 	}
-
 }
 
 func makeJSON(h HTTPHandler, w http.ResponseWriter, r *http.Request) {

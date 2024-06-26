@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/TimRobillard/handicap_tracker/store"
-	"github.com/TimRobillard/handicap_tracker/views/components"
+	"github.com/TimRobillard/handicap_tracker/views/dashboard"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -58,7 +58,7 @@ func handlePostRound(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(errors) > 0 {
-		components.Error(errors).Render(r.Context(), w)
+		dashboard.Error(errors).Render(r.Context(), w)
 		return
 	}
 

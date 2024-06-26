@@ -12,13 +12,17 @@ CREATE TABLE
     IF NOT EXISTS course (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL UNIQUE,
-        pars INTEGER[],
+        thumbnail VARCHAR(255),
+        front INTEGER[],
+        back INTEGER[],
         slope REAL,
         rating REAL,
         is_deleted BOOL DEFAULT false,
         created_at TIMESTAMP DEFAULT NOW (),
         updated_at TIMESTAMP DEFAULT NOW ()
     );
+
+CREATE INDEX course_name ON course USING gin(name);
 
 CREATE TABLE
     IF NOT EXISTS round(
@@ -30,3 +34,5 @@ CREATE TABLE
         FOREIGN KEY (course_id) REFERENCES course(id),
         FOREIGN KEY (user_id) REFERENCES users(id)
     );
+
+CREATE EXTENSION pg_trgm;

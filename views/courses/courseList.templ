@@ -1,0 +1,42 @@
+package courses
+
+import "github.com/TimRobillard/handicap_tracker/store"
+import "fmt"
+import "github.com/TimRobillard/handicap_tracker/errors"
+import "net/http"
+
+templ CourseListError(err errors.APIError) {
+	<section>
+		if err.Msg != "" {
+			<p class="text-red-400">{ err.Msg }</p>
+		} else {
+			<p class="">No Courses found</p>
+		}
+	</section>
+}
+
+templ CourseList(courses []*store.UICourse) {
+	if courses != nil && len(courses) > 0 {
+		<ul class="flex flex-col gap-2">
+			for _, c := range(courses) {
+				<li
+					hx-get={ fmt.Sprintf("/courses/score/%d", c.Id) }
+					hx-trigger="click, keyup[keyCode==13]"
+					hx-target="#container"
+					class="bg-white p-2 flex rounded-md gap-2 items-center cursor-pointer hover:bg-slate-100"
+					tabindex={ fmt.Sprintf("%d", c.Id+1) }
+				>
+					<div class="w-16 h-14">
+						<img src={ c.Thumbnail } class="object-cover w-full h-full"/>
+					</div>
+					<div>
+						<h4 class="font-semibold">{ c.Name }</h4>
+						<h5 class="text-slate-700">{ c.Par }</h5>
+					</div>
+				</li>
+			}
+		</ul>
+	} else {
+		@CourseListError(errors.NewAPIError(http.StatusNotFound, fmt.Errorf("")))
+	}
+}
