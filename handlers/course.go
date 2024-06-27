@@ -22,7 +22,6 @@ func RegisterCourseRoutes(router *chi.Mux, cs store.CourseStore) {
 	c.cs = cs
 
 	r.Get("/", Make(c.handleGetCourseList, courses.CourseListError))
-	r.Get("/select", Make(c.handleGetCourseSelect, nil))
 	r.Get("/score/{id}", Make(c.handleGetCourseForScore, nil))
 
 	router.Mount("/courses", r)
@@ -36,27 +35,6 @@ func (c courseHandler) handleGetCourseList(w http.ResponseWriter, r *http.Reques
 	} else {
 		return Render(w, r, courses.CourseList(cs))
 	}
-}
-
-func (c courseHandler) handleGetCourseSelect(w http.ResponseWriter, r *http.Request) error {
-	course := []store.Course{{
-		Id:     1,
-		Name:   "Manderley Central North",
-		Front:  [9]int{5, 3, 5, 3, 4, 3, 5, 4, 4},
-		Back:   [9]int{5, 4, 4, 3, 5, 4, 3, 4, 4},
-		Slope:  110,
-		Rating: 67.1,
-	},
-		{
-			Id:     2,
-			Name:   "Manderley Central South",
-			Front:  [9]int{5, 3, 5, 3, 4, 3, 5, 4, 4},
-			Back:   [9]int{5, 4, 4, 3, 5, 4, 3, 4, 4},
-			Slope:  110,
-			Rating: 67.1,
-		}}
-
-	return Render(w, r, dashboard.CourseSelect(&course))
 }
 
 func (c courseHandler) handleGetCourseForScore(w http.ResponseWriter, r *http.Request) error {

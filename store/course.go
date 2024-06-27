@@ -112,6 +112,7 @@ func (pg PostgresStore) SearchCourses(text string) ([]*UICourse, error) {
 	}
 
 	defer rows.Close()
+	caser := cases.Title(language.Und)
 
 	for rows.Next() {
 		var c UICourse
@@ -119,6 +120,8 @@ func (pg PostgresStore) SearchCourses(text string) ([]*UICourse, error) {
 		if err := rows.Scan(&c.Id, &c.Name, &c.Thumbnail, &rank); err != nil {
 			return courses, err
 		}
+
+		c.Name = caser.String(c.Name)
 
 		courses = append(courses, &c)
 	}

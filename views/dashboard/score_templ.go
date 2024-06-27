@@ -376,7 +376,7 @@ func ScorePage(recents []*store.UICourse) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section class=\"w-full h-screen\"><h2 class=\"text-2xl font-semibold text-center\">Add Round</h2><div id=\"container\" class=\"flex flex-col p-4 gap-4\"><form hx-get=\"/courses\" class=\"flex gap-1\" hx-trigger=\"submit, input changed delay:500ms from:input\" hx-target=\"#course-list\"><input name=\"keyword\" placeholder=\"Search for course\" class=\"px-4 py-6 rounded-l-md w-full\"> <button type=\"submit\" class=\"px-8 bg-green-800 text-white rounded-r-md\"><i class=\"fa-solid fa-magnifying-glass\"></i></button></form><div id=\"course-list\"></div></div></section></main>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section class=\"w-full h-screen p-4 gap-4 flex flex-col\"><h2 class=\"text-2xl font-semibold text-center\">Add Round</h2><div id=\"container\" class=\"flex flex-col gap-4\"><form hx-get=\"/courses\" class=\"flex gap-1\" hx-trigger=\"submit, input changed delay:500ms from:input\" hx-target=\"#course-list\"><input name=\"keyword\" placeholder=\"Search for course\" class=\"px-4 py-6 rounded-md w-full\"></form><div id=\"course-list\"></div></div></section></main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
