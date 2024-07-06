@@ -2,6 +2,7 @@ package errors
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 )
 
@@ -22,9 +23,26 @@ func NewAPIError(statusCode int, err error) APIError {
 	}
 }
 
+func InternalServerError(err error) APIError {
+	slog.Error(err.Error())
+	return APIError{
+		StatusCode: http.StatusInternalServerError,
+		Msg:        "Something went wrong",
+		Context:    map[string]string{"msg": err.Error()},
+	}
+}
+
 func BadRequestError(msg string, context map[string]string) APIError {
 	return APIError{
-		StatusCode: http.StatusUnprocessableEntity,
+		StatusCode: http.StatusBadRequest,
+		Msg:        msg,
+		Context:    context,
+	}
+}
+
+func UnauthorizedError(msg string, context map[string]string) APIError {
+	return APIError{
+		StatusCode: http.StatusUnauthorized,
 		Msg:        msg,
 		Context:    context,
 	}

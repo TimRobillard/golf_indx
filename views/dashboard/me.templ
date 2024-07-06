@@ -2,7 +2,6 @@ package dashboard
 
 import (
 	"github.com/TimRobillard/handicap_tracker/views/components"
-	dashboardComponents "github.com/TimRobillard/handicap_tracker/views/dashboard/components"
 	"github.com/TimRobillard/handicap_tracker/store"
 )
 
@@ -26,7 +25,7 @@ templ Me(indx string, profile_pic *string, rounds [20]store.CalcRound) {
 		<body class="antialiased relative bg-slate-200 overflow-y-scroll">
 			<main class="relative h-auto min-h-screen w-screen flex flex-col sm:flex-row">
 				<a href="/dashboard/score" class="sm:hidden fixed flex items-center justify-center bottom-4 right-4 h-16 w-16 bg-green-800 text-white font-semibold text-sm rounded-full shadow-md hover:shadow-lg hover:bg-green-900"><i class="fa-solid fa-plus text-lg shadow-md"></i></a>
-				@dashboardComponents.SideBar()
+				@components.SideBar()
 				<section class="w-full h-screen">
 					<div class="hidden sm:flex p-8 items-center">
 						<h2 class="font-semibold text-3xl">My IndX</h2>

@@ -2,19 +2,19 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/TimRobillard/handicap_tracker/errors"
+	"github.com/TimRobillard/handicap_tracker/handlers/middleware"
+	"github.com/TimRobillard/handicap_tracker/store"
 	"github.com/TimRobillard/handicap_tracker/views/auth"
 	"github.com/TimRobillard/handicap_tracker/views/errorViews"
 	"github.com/go-chi/chi/v5"
 )
 
-func RegisterAuthRoutes(router *chi.Mux) {
-	router.Get("/login", Make(handleLogin, errorViews.ApiError))
-	router.Get("/register", Make(handleRegister, errorViews.ApiError))
-
-	router.Post("/auth/login", Make(handlePostLogin, errorViews.ApiError))
-	router.Post("/auth/register", Make(handlePostRegister, auth.BadLogin))
+type authHandler struct {
+	us store.UserStore
 }
 
 type RegisterRequest struct {
@@ -22,34 +22,89 @@ type RegisterRequest struct {
 	Password string `json:"password"`
 }
 
-func handlePostLogin(w http.ResponseWriter, r *http.Request) error {
-	return errors.NotImplementedError()
+func RegisterAuthRoutes(router *chi.Mux, us store.UserStore) {
+	ah := &authHandler{
+		us: us,
+	}
+
+	router.Get("/login", Make(ah.handleLogin, errorViews.ApiError))
+	router.Get("/register", Make(ah.handleRegister, errorViews.ApiError))
+
+	router.Post("/auth/login", Make(ah.handlePostLogin, auth.BadLogin))
+	router.Post("/auth/register", Make(ah.handlePostRegister, auth.BadLogin))
 }
 
-func handlePostRegister(w http.ResponseWriter, r *http.Request) error {
+func (a authHandler) handlePostLogin(w http.ResponseWriter, r *http.Request) error {
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 
-	errorMap := make(map[string]string)
+	user, err := a.us.GetUserByUsername(username)
 
-	if len(username) == 0 {
-		errorMap["username"] = "username required"
-	}
-	if len(password) == 0 {
-		errorMap["password"] = "password required"
+	if err != nil {
+		return errors.UnauthorizedError("unauthorized", nil)
 	}
 
-	if len(errorMap) > 0 {
-		return errors.BadRequestError("username and password required", errorMap)
+	if ok := user.ValidatePassword(password); !ok {
+		return errors.UnauthorizedError("unauthorized", nil)
 	}
+
+	token, err := middleware.GenerateToken(user.Id)
+	if err != nil {
+		return errors.InternalServerError(err)
+	}
+
+	cookie := &http.Cookie{
+		Value:   token,
+		Name:    "_q",
+		Path:    "/",
+		Expires: time.Now().Add(24 * time.Hour),
+	}
+
+	http.SetCookie(w, cookie)
+	w.Header().Add("Hx-Redirect", "/dashboard")
 
 	return nil
 }
 
-func handleLogin(w http.ResponseWriter, r *http.Request) error {
+func (a authHandler) handlePostRegister(w http.ResponseWriter, r *http.Request) error {
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+
+	if len(username) == 0 || len(password) == 0 {
+		return errors.BadRequestError("username and password required", nil)
+	}
+
+	user, err := a.us.CreateUser(username, password)
+
+	if err != nil {
+		if strings.Contains(err.Error(), "duplicate key") {
+			return errors.BadRequestError("username taken", nil)
+		}
+		return errors.InternalServerError(err)
+	}
+
+	token, err := middleware.GenerateToken(user.Id)
+	if err != nil {
+		return errors.InternalServerError(err)
+	}
+
+	cookie := &http.Cookie{
+		Value:   token,
+		Name:    "_q",
+		Path:    "/",
+		Expires: time.Now().Add(24 * time.Hour),
+	}
+
+	http.SetCookie(w, cookie)
+	w.Header().Add("Hx-Redirect", "/dashboard")
+
+	return nil
+}
+
+func (a authHandler) handleLogin(w http.ResponseWriter, r *http.Request) error {
 	return Render(w, r, auth.Login())
 }
 
-func handleRegister(w http.ResponseWriter, r *http.Request) error {
+func (a authHandler) handleRegister(w http.ResponseWriter, r *http.Request) error {
 	return Render(w, r, auth.Register())
 }

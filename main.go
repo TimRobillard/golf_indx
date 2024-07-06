@@ -34,7 +34,7 @@ func main() {
 	router.Handle("/public/*", public())
 	router.Get("/", handlers.Make(handlers.HandleHome, errorViews.ApiError))
 
-	handlers.RegisterAuthRoutes(router)
+	handlers.RegisterAuthRoutes(router, pg)
 	handlers.RegisterCourseRoutes(router, pg)
 	handlers.RegisterDashboardRoutes(router)
 	handlers.RegisterIndXRoutes(router)

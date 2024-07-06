@@ -13,7 +13,6 @@ import "bytes"
 import (
 	"github.com/TimRobillard/handicap_tracker/store"
 	"github.com/TimRobillard/handicap_tracker/views/components"
-	dashboardComponents "github.com/TimRobillard/handicap_tracker/views/dashboard/components"
 )
 
 func Me(indx string, profile_pic *string, rounds [20]store.CalcRound) templ.Component {
@@ -33,7 +32,7 @@ func Me(indx string, profile_pic *string, rounds [20]store.CalcRound) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = dashboardComponents.SideBar().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.SideBar().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

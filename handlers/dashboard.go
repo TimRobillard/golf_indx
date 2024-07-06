@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/TimRobillard/handicap_tracker/handlers/middleware"
 	"github.com/TimRobillard/handicap_tracker/store"
 	"github.com/TimRobillard/handicap_tracker/views/dashboard"
 	"github.com/TimRobillard/handicap_tracker/views/errorViews"
@@ -13,6 +14,7 @@ import (
 
 func RegisterDashboardRoutes(r *chi.Mux) {
 	d := chi.NewRouter()
+	d.Use(middleware.JwtAuth)
 	d.Get("/", Make(handleDashboard, errorViews.ApiError))
 	d.Get("/score", Make(handleScore, errorViews.ApiError))
 	d.Get("/chart/me", Make(handleChartMe, nil))

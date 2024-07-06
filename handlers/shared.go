@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -27,11 +26,12 @@ func Make(h HTTPHandler, c ErrorComponent) http.HandlerFunc {
 
 func makeHTMX(h HTTPHandler, w http.ResponseWriter, r *http.Request, c ErrorComponent) {
 	if err := h(w, r); err != nil {
-		fmt.Println(err.Error())
 		// TODO get errors from APIError
 		if apiErr, ok := err.(errors.APIError); ok {
+			w.WriteHeader(apiErr.StatusCode)
 			c(apiErr).Render(r.Context(), w)
 		} else {
+			w.WriteHeader(http.StatusInternalServerError)
 			c(errors.NewAPIError(http.StatusInternalServerError, err)).Render(r.Context(), w)
 		}
 		slog.Error("HTTP handler error", "err", err, "path", r.URL.Path)

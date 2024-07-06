@@ -14,7 +14,7 @@ type User struct {
 	password string
 }
 
-type UserStorage interface {
+type UserStore interface {
 	CreateUser(string, string) (*User, error)
 	GetUserById(int) (*User, error)
 	GetUserByUsername(string) (*User, error)
@@ -26,7 +26,7 @@ func (pg PostgresStore) CreateUser(username, password string) (*User, error) {
 	username = strings.Trim(username, " ")
 
 	query := `INSERT INTO users(username, password)
-	VALUE($1, $2)
+	VALUES($1, $2)
 	RETURNING id;`
 
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
@@ -42,7 +42,7 @@ func (pg PostgresStore) CreateUser(username, password string) (*User, error) {
 		Username: username,
 	}
 
-	return user, nil
+	return user, err
 }
 
 func (pg PostgresStore) GetUserById(id int) (*User, error) {
