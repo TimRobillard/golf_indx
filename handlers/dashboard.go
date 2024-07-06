@@ -12,23 +12,39 @@ import (
 	"golang.org/x/text/language"
 )
 
-func RegisterDashboardRoutes(r *chi.Mux) {
+type dashboardHandler struct {
+	us store.UserStore
+	cs store.CourseStore
+	rs store.RoundStore
+}
+
+func RegisterDashboardRoutes(r *chi.Mux, pg *store.PostgresStore) {
 	d := chi.NewRouter()
+	h := &dashboardHandler{
+		us: pg,
+		cs: pg,
+		rs: pg,
+	}
+
 	d.Use(middleware.JwtAuth)
-	d.Get("/", Make(handleDashboard, errorViews.ApiError))
+	d.Get("/", Make(h.handleDashboard, errorViews.ApiError))
 	d.Get("/score", Make(handleScore, errorViews.ApiError))
 	d.Get("/chart/me", Make(handleChartMe, nil))
 
 	r.Mount("/dashboard", d)
 }
 
-func handleDashboard(w http.ResponseWriter, r *http.Request) error {
+func (h dashboardHandler) handleDashboard(w http.ResponseWriter, r *http.Request) error {
+	u, err := middleware.GetUserFromRequest(r, h.us)
+	if err != nil {
+		return err
+	}
 	caser := cases.Title(language.English)
 	manderley := caser.String("manderley on the green")
 	dragonfly := caser.String("drangonfly")
 	amberwood := caser.String("amberwood")
 	cedarhill := caser.String("cedarhill")
-	profile_pic := "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg"
+
 	rounds := [20]store.CalcRound{
 		{Score: "102", Course: manderley, TimeAgo: "2 days ago"},
 		{Score: "92", Course: dragonfly, TimeAgo: "2 days ago"},
@@ -51,7 +67,7 @@ func handleDashboard(w http.ResponseWriter, r *http.Request) error {
 		{Score: "98", Course: cedarhill, TimeAgo: "2 days ago"},
 		{Score: "94", Course: manderley, TimeAgo: "2 days ago"},
 	}
-	return Render(w, r, dashboard.Me("20.3", &profile_pic, rounds))
+	return Render(w, r, dashboard.Me(u, rounds))
 }
 
 func handleScore(w http.ResponseWriter, r *http.Request) error {

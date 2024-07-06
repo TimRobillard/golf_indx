@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/TimRobillard/handicap_tracker/store"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -21,8 +22,12 @@ const (
 	ContextId ContextKey = "userId"
 )
 
-func GetUserIdFromRequest(c context.Context) int {
-	return c.Value("userId").(int)
+func GetUserFromRequest(r *http.Request, us store.UserStore) (*store.UIUser, error) {
+	userId, ok := r.Context().Value(ContextId).(int)
+	if !ok {
+		return nil, fmt.Errorf("no user id found in context")
+	}
+	return us.GetUIUserById(userId)
 }
 
 func JwtAuth(next http.Handler) http.Handler {
@@ -40,6 +45,7 @@ func JwtAuth(next http.Handler) http.Handler {
 				return []byte(os.Getenv("JWT_SECRET")), nil
 			},
 		)
+		fmt.Printf("Valid Token %t", token.Valid)
 		if err != nil || !token.Valid {
 			http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
 			return

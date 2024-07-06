@@ -9,14 +9,23 @@ import (
 )
 
 type User struct {
-	Id       int
-	Username string
-	password string
+	Id         int
+	Username   string
+	password   string
+	ProfilePic string
+}
+
+type UIUser struct {
+	Id         int
+	Username   string `json:"username"`
+	Indx       string `json:"indx"`
+	ProfilePic string `json:"profilePic"`
 }
 
 type UserStore interface {
 	CreateUser(string, string) (*User, error)
 	GetUserById(int) (*User, error)
+	GetUIUserById(int) (*UIUser, error)
 	GetUserByUsername(string) (*User, error)
 	DeleteUser(int) error
 }
@@ -45,22 +54,31 @@ func (pg PostgresStore) CreateUser(username, password string) (*User, error) {
 	return user, err
 }
 
+func (pg PostgresStore) GetUIUserById(id int) (*UIUser, error) {
+	u, err := pg.GetUserById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return u.toUI(), nil
+}
+
 func (pg PostgresStore) GetUserById(id int) (*User, error) {
-	query := `SELECT id, username, password
+	query := `SELECT id, username, password, profile_pic
 	FROM users WHERE id = $1 AND is_deleted = false;`
 
 	user := new(User)
-	err := pg.db.QueryRow(query, id).Scan(&user.Id, &user.Username, &user.password)
+	err := pg.db.QueryRow(query, id).Scan(&user.Id, &user.Username, &user.password, &user.ProfilePic)
 
 	return user, err
 }
 
 func (pg PostgresStore) GetUserByUsername(username string) (*User, error) {
-	query := `SELECT id, username, password
+	query := `SELECT id, username, password, profile_pic
 	FROM users WHERE username = $1 AND is_deleted = false;`
 
 	user := new(User)
-	err := pg.db.QueryRow(query, username).Scan(&user.Id, &user.Username, &user.password)
+	err := pg.db.QueryRow(query, username).Scan(&user.Id, &user.Username, &user.password, &user.ProfilePic)
 
 	return user, err
 }
@@ -84,4 +102,14 @@ func (u User) ScoreCardName() string {
 		return c.String(u.Username[:4]) + "..."
 	}
 	return c.String(u.Username)
+}
+
+func (u User) toUI() *UIUser {
+	c := cases.Title(language.Und)
+	return &UIUser{
+		Id:         u.Id,
+		Username:   c.String(u.Username),
+		Indx:       "20.3",
+		ProfilePic: u.ProfilePic,
+	}
 }

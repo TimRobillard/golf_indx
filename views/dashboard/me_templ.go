@@ -15,7 +15,7 @@ import (
 	"github.com/TimRobillard/handicap_tracker/views/components"
 )
 
-func Me(indx string, profile_pic *string, rounds [20]store.CalcRound) templ.Component {
+func Me(u *store.UIUser, rounds [20]store.CalcRound) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -40,11 +40,24 @@ func Me(indx string, profile_pic *string, rounds [20]store.CalcRound) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.ProfilePic(indx, profile_pic).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.ProfilePic(u.Indx, &u.ProfilePic).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><span class=\"block text-2xl font-semibold\">Tim Robillard</span> <span class=\"block text-slate-700\">Low round 92</span></div></div><div class=\"rounded-3xl col-start-1 col-end-4 row-start-4 row-end-6 md:col-start-4 md:col-end-6 md:row-start-1 md:row-end-4\"><div class=\"flex flex-col bg-white rounded-3xl p-4 pr-0.5 md:h-full\"><span class=\"font-semibold text-lg\">Calculated Rounds</span><div class=\"md:overflow-y-scroll\"><ul class=\"md:h-full sm:overflow-y-scroll flex flex-col gap-2\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><span class=\"block text-2xl font-semibold\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var2 string
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(u.Username)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/me.templ`, Line: 40, Col: 63}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span> <span class=\"block text-slate-700\">Low round 92</span></div></div><div class=\"rounded-3xl col-start-1 col-end-4 row-start-4 row-end-6 md:col-start-4 md:col-end-6 md:row-start-1 md:row-end-4\"><div class=\"flex flex-col bg-white rounded-3xl p-4 pr-0.5 md:h-full\"><span class=\"font-semibold text-lg\">Calculated Rounds</span><div class=\"md:overflow-y-scroll\"><ul class=\"md:h-full sm:overflow-y-scroll flex flex-col gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

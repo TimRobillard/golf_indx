@@ -36,9 +36,9 @@ func main() {
 
 	handlers.RegisterAuthRoutes(router, pg)
 	handlers.RegisterCourseRoutes(router, pg)
-	handlers.RegisterDashboardRoutes(router)
+	handlers.RegisterDashboardRoutes(router, pg)
 	handlers.RegisterIndXRoutes(router)
-	handlers.RegisterRoundRoutes(router)
+	handlers.RegisterRoundRoutes(router, pg)
 
 	router.Get("/*", handlers.Make(handlers.HandleNotFound, nil))
 

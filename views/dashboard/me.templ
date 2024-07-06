@@ -5,7 +5,7 @@ import (
 	"github.com/TimRobillard/handicap_tracker/store"
 )
 
-templ Me(indx string, profile_pic *string, rounds [20]store.CalcRound) {
+templ Me(u *store.UIUser, rounds [20]store.CalcRound) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -35,9 +35,9 @@ templ Me(indx string, profile_pic *string, rounds [20]store.CalcRound) {
 					</div>
 					<div class="grid grid-cols-3 md:grid-cols-5 dashboard-rows gap-2 sm:gap-4 p-4 w-full">
 						<div class="col-span-3 flex items-center justify-start gap-4">
-							@components.ProfilePic(indx, profile_pic)
+							@components.ProfilePic(u.Indx, &u.ProfilePic)
 							<div>
-								<span class="block text-2xl font-semibold">Tim Robillard</span>
+								<span class="block text-2xl font-semibold">{ u.Username }</span>
 								<span class="block text-slate-700">Low round 92</span>
 							</div>
 						</div>
