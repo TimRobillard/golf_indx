@@ -20,13 +20,15 @@ func main() {
 	}
 
 	pg, err := store.NewPostgresStore()
-	if false {
-		log.Default().Println("Seeding db...")
-		seed.Seed(pg)
-	}
 
 	if err != nil {
 		log.Fatal(err.Error())
+	}
+
+	if false {
+		log.Default().Println("Seeding db...")
+		seed.Seed(pg)
+		return
 	}
 
 	router := chi.NewMux()

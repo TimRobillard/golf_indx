@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/TimRobillard/handicap_tracker/handlers/middleware"
@@ -8,8 +9,6 @@ import (
 	"github.com/TimRobillard/handicap_tracker/views/dashboard"
 	"github.com/TimRobillard/handicap_tracker/views/errorViews"
 	"github.com/go-chi/chi/v5"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 type dashboardHandler struct {
@@ -39,34 +38,12 @@ func (h dashboardHandler) handleDashboard(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		return err
 	}
-	caser := cases.Title(language.English)
-	manderley := caser.String("manderley on the green")
-	dragonfly := caser.String("drangonfly")
-	amberwood := caser.String("amberwood")
-	cedarhill := caser.String("cedarhill")
 
-	rounds := [20]store.CalcRound{
-		{Score: "102", Course: manderley, TimeAgo: "2 days ago"},
-		{Score: "92", Course: dragonfly, TimeAgo: "2 days ago"},
-		{Score: "96", Course: manderley, TimeAgo: "2 days ago"},
-		{Score: "96", Course: cedarhill, TimeAgo: "2 days ago"},
-		{Score: "34", Course: amberwood, TimeAgo: "2 days ago"},
-		{Score: "101", Course: "Some fancy Golf and Country Club", TimeAgo: "2 days ago"},
-		{Score: "100", Course: cedarhill, TimeAgo: "2 days ago"},
-		{Score: "98", Course: cedarhill, TimeAgo: "2 days ago"},
-		{Score: "94", Course: manderley, TimeAgo: "2 days ago"},
-		{Score: "93", Course: manderley, TimeAgo: "2 days ago"},
-		{Score: "92", Course: manderley, TimeAgo: "2 days ago"},
-		{Score: "102", Course: manderley, TimeAgo: "2 days ago"},
-		{Score: "92", Course: dragonfly, TimeAgo: "2 days ago"},
-		{Score: "96", Course: manderley, TimeAgo: "2 days ago"},
-		{Score: "96", Course: cedarhill, TimeAgo: "2 days ago"},
-		{Score: "34", Course: amberwood, TimeAgo: "2 days ago"},
-		{Score: "101", Course: manderley, TimeAgo: "2 days ago"},
-		{Score: "100", Course: cedarhill, TimeAgo: "2 days ago"},
-		{Score: "98", Course: cedarhill, TimeAgo: "2 days ago"},
-		{Score: "94", Course: manderley, TimeAgo: "2 days ago"},
+	rounds, err := h.rs.GetRoundsByUserId(u.Id)
+	if err != nil {
+		return err
 	}
+	slog.Info("Testing %d", len(rounds))
 	return Render(w, r, dashboard.Me(u, rounds))
 }
 

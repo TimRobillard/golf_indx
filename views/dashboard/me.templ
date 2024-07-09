@@ -5,7 +5,7 @@ import (
 	"github.com/TimRobillard/handicap_tracker/store"
 )
 
-templ Me(u *store.UIUser, rounds [20]store.CalcRound) {
+templ Me(u *store.UIUser, rounds [20]*store.CalcRound) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -47,7 +47,9 @@ templ Me(u *store.UIUser, rounds [20]store.CalcRound) {
 								<div class="md:overflow-y-scroll">
 									<ul class="md:h-full sm:overflow-y-scroll flex flex-col gap-2">
 										for _, round := range(rounds) {
-											@components.CalculatedRound(round)
+											if round != nil {
+												@components.CalculatedRound(*round)
+											}
 										}
 									</ul>
 								</div>

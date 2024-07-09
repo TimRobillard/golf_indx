@@ -15,7 +15,7 @@ import (
 	"github.com/TimRobillard/handicap_tracker/views/components"
 )
 
-func Me(u *store.UIUser, rounds [20]store.CalcRound) templ.Component {
+func Me(u *store.UIUser, rounds [20]*store.CalcRound) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -62,9 +62,11 @@ func Me(u *store.UIUser, rounds [20]store.CalcRound) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, round := range rounds {
-			templ_7745c5c3_Err = components.CalculatedRound(round).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
+			if round != nil {
+				templ_7745c5c3_Err = components.CalculatedRound(*round).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul></div></div></div><div class=\"bg-white rounded-3xl col-span-3 row-span-2 p-4\"><span class=\"md:flex-1 font-semibold text-lg\">Indx</span><div class=\"flex items-center justify-center h-full\"><div id=\"chart-spinner\" class=\"animate-spin\"><i class=\"fa-solid fa-spinner text-4xl text-green-800\"></i></div><canvas id=\"myChart\" class=\"hidden\"></canvas><span id=\"chart-no-data\" class=\"hidden text-lg text-slate-500 text-center\">No Data Found</span></div></div></div></section><div class=\"hidden text-green-400\">generate class</div></main></body><script>\n\t\t\tdocument.addEventListener('DOMContentLoaded', \n\t\t\tasync () => {\n\t\t\t\ttry {\n\t\t\t\t\tconst response = await fetch('http://127.0.0.1:7331/dashboard/chart/me', {\n\t\t\t\t\t\theaders: {\n\t\t\t\t\t\t\t\"Accept\": \"application/json\"\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t\tconst data = await response.json();\n\t\t\t\t\tif (data) {\n\t\t\t\t\tconst ctx = document.getElementById('myChart');\n\t\t\t\t\tnew Chart(ctx, {\n\t\t\t\t\t\ttype: 'line',\n\t\t\t\t\t\tdata: {\n\t\t\t\t\t\t\tlabels: data.labels,\n\t\t\t\t\t\t\tdatasets: [{\n\t\t\t\t\t\t\t\tlabel: '',\n\t\t\t\t\t\t\t\tdata: data.data,\n\t\t\t\t\t\t\t\tborderWidth: 2,\n\t\t\t\t\t\t\t}]\n\t\t\t\t\t\t},\n\t\t\t\t\t\tresponsive: true,\n\t\t\t\t\t\toptions: {\n\t\t\t\t\t\t\tfill: {\n\t\t\t\t\t\t\t\ttarget: 'origin',\n\t\t\t\t\t\t\t\tabove: 'rgb(22, 101, 52)',\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\tpointBackgroundColor: '#F2F2F2',\n\t\t\t\t\t\t\tpointBorderColor: '#333',\n\t\t\t\t\t\t\tpointRadius: 4,\n\t\t\t\t\t\t\tborderColor: 'rgb(22, 101, 52)',\n\t\t\t\t\t\t\tresponsive: true,\n\t\t\t\t\t\t\tscales: {\n\t\t\t\t\t\t\t\ty: {\n\t\t\t\t\t\t\t\t\tbeginAtZero: true,\n\t\t\t\t\t\t\t\t\tmin: data.min, max: data.max\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\telements: {\n\t\t\t\t\t\t\t\tline: {\n\t\t\t\t\t\t\t\ttension: 0.2\n\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\tlayout: {\n\t\t\t\t\t\t\t\tpadding: 20\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\tplugins: {\n\t\t\t\t\t\t\t\tlegend: {\n\t\t\t\t\t\t\t\t\tdisplay: false,\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t\tctx.classList.remove('hidden')\n\t\t\t\t\t} else {\n\t\t\t\t\t\tdocument.getElementById('chart-no-data').classList.remove('hidden')\n\t\t\t\t\t}\n\t\t\t\t} catch(e) {\n\t\t\t\t\tconsole.log(e)\n\t\t\t\t\t\tdocument.getElementById('chart-no-data').classList.remove('hidden')\n\t\t\t\t} finally {\n\t\t\t\t\tdocument.getElementById('chart-spinner').remove()\n\t\t\t\t}\n\t\t\t});\n\t\t\tconst scoreForm = document.getElementById('score-form');\n\t\t\tconst scoreInputs = document.querySelectorAll('#score-form input');\n\t\t\tconst scoreOut = document.getElementById('score-out');\n\t\t\tconst scoreIn = document.getElementById('score-in');\n\t\t\tconst scoreTot = document.getElementById('score-tot');\n\t\t\tconst saveTot = document.getElementById('save-tot');\n\n\t\t\tscoreForm.addEventListener('input', calculateScore)\n\n\t\t\tfunction calculateScore() {\n\t\t\t\tlet outVal = 0;\n\t\t\t\tlet inVal = 0;\n\t\t\t\tscoreInputs.forEach(input => {\n\t\t\t\t\tconst hole = Number(input.id.split('-')[1]);\n\t\t\t\t\tconst value = Number(input.value);\n\t\t\t\t\tif (hole < 10) {\n\t\t\t\t\t\toutVal += value;\n\t\t\t\t\t\treturn;\n\t\t\t\t\t}\n\t\t\t\t\tinVal += value;\n\t\t\t\t})\n\t\t\t\tscoreOut.innerHTML = outVal;\n\t\t\t\tscoreIn.innerHTML = inVal;\n\t\t\t\tscoreTot.innerHTML = outVal + inVal;\n\t\t\t\tsaveTot.innerHTML = outVal + inVal;\n\t\t\t}\n\t\t</script></html>")

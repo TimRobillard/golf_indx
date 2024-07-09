@@ -1,5 +1,11 @@
 CREATE EXTENSION pg_trgm;
-update pg_opclass set opcdefault = true where opcname='gin_trgm_ops';
+
+update pg_opclass
+set
+    opcdefault = true
+where
+    opcname = 'gin_trgm_ops';
+
 CREATE TABLE
     IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -25,7 +31,7 @@ CREATE TABLE
         updated_at TIMESTAMP DEFAULT NOW ()
     );
 
-CREATE INDEX course_name ON course USING gin(name);
+CREATE INDEX course_name ON course USING gin (name);
 
 CREATE TABLE
     IF NOT EXISTS round(
@@ -34,9 +40,104 @@ CREATE TABLE
         user_id SERIAL NOT NULL,
         front INTEGER[],
         back INTEGER[],
+        date TIMESTAMP,
         created_at TIMESTAMP DEFAULT NOW (),
         updated_at TIMESTAMP DEFAULT NOW (),
-        FOREIGN KEY (course_id) REFERENCES course(id),
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        FOREIGN KEY (course_id) REFERENCES course (id),
+        FOREIGN KEY (user_id) REFERENCES users (id)
     );
 
+BEGIN TRANSACTION;
+
+INSERT INTO
+    users (username, password)
+VALUES
+    (
+        'albatrooss',
+        '$2a$14$FcxstGl6bVJw.GQTTkRdD.Yy5tWJSvrtuXZ7ifcd3dyIZ9lBFjt4u'
+    );
+
+INSERT INTO
+    course (name, thumbnail, rating, slope, front, back)
+VALUES
+    (
+        'manderley central north',
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYsa5s9fz-agjYOZtBTJDSaDV_78gxOiRTQw&usqp=CAU',
+        110,
+        67.1,
+        '{5, 3, 5, 3, 4, 3, 5, 4, 4}',
+        '{5, 4, 4, 3, 5, 4, 3, 4, 4}'
+    ),
+    (
+        'manderley north south',
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYsa5s9fz-agjYOZtBTJDSaDV_78gxOiRTQw&usqp=CAU',
+        112,
+        65.3,
+        '{5, 4, 4, 3, 5, 4, 3, 4, 4}',
+        '{4, 4, 3, 4, 4, 3, 5, 3, 5}'
+    ),
+    (
+        'dragonfly golf links',
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYsa5s9fz-agjYOZtBTJDSaDV_78gxOiRTQw&usqp=CAU',
+        123,
+        69.9,
+        '{4, 4, 4, 4, 3, 5, 3, 4, 5}',
+        '{4, 5, 4, 3, 4, 5, 4, 4, 3}'
+    ),
+    (
+        'cedarhill',
+        'https://stittsvillecentral.ca/wp-content/uploads/amberwood-village-golf-green.jpg',
+        112,
+        67.6,
+        '{4, 4, 5, 4, 3, 4, 4, 4, 3}',
+        '{4, 4, 4, 4, 3, 3, 4, 5, 4}'
+    ),
+    (
+        'amberwood',
+        'https://stittsvillecentral.ca/wp-content/uploads/amberwood-village-golf-green.jpg',
+        99,
+        31.2,
+        '{3, 4, 4, 3, 4, 3, 3, 4, 4}',
+        '{}'
+    );
+
+INSERT INTO
+    round(user_id, course_id, front, back, date)
+VALUES
+    (
+        1,
+        1,
+        '{8, 4, 6, 5, 6, 4, 9, 6, 6}',
+        '{7, 6, 6, 2, 7, 4, 6, 4, 6}',
+        '2024-06-30'
+    ),
+    (
+        1,
+        3,
+        '{5, 5, 8, 5, 2, 5, 4, 5}',
+        '{5, 5, 5, 4, 4, 8, 6, 6, 3}',
+        '2024-06-24'
+    ),
+    (
+        1,
+        4,
+        '{7, 5, 5, 8, 3, 4, 6, 7, 5}',
+        '{3, 7, 5, 3, 3, 4, 7, 6, 8}',
+        '2024-06-24'
+    ),
+    (
+        1,
+        5,
+        '{3, 5, 3, 4, 6, 4, 3, 6, 6}',
+        '{3, 5, 3, 4, 6, 4, 3, 6, 6}',
+        '2024-06-24'
+    ),
+    (
+        1,
+        2,
+        '{7, 7, 6, 4, 6, 8, 4, 4, 6}',
+        '{5, 6, 4, 7, 5, 5, 6, 3, 7}',
+        '2024-06-24'
+    );
+
+COMMIT

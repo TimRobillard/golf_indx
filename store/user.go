@@ -1,6 +1,7 @@
 package store
 
 import (
+	"fmt"
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
@@ -43,6 +44,8 @@ func (pg PostgresStore) CreateUser(username, password string) (*User, error) {
 		return nil, err
 	}
 
+	fmt.Printf("Hashed pwd %s", string(bytes))
+
 	var id int
 	err = pg.db.QueryRow(query, username, string(bytes)).Scan(&id)
 
@@ -60,7 +63,7 @@ func (pg PostgresStore) GetUIUserById(id int) (*UIUser, error) {
 		return nil, err
 	}
 
-	return u.toUI(), nil
+	return u.ToUI(), nil
 }
 
 func (pg PostgresStore) GetUserById(id int) (*User, error) {
@@ -104,7 +107,7 @@ func (u User) ScoreCardName() string {
 	return c.String(u.Username)
 }
 
-func (u User) toUI() *UIUser {
+func (u User) ToUI() *UIUser {
 	c := cases.Title(language.Und)
 	return &UIUser{
 		Id:         u.Id,
