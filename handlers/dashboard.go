@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log/slog"
 	"net/http"
 
 	"github.com/TimRobillard/handicap_tracker/handlers/middleware"
@@ -12,23 +11,25 @@ import (
 )
 
 type dashboardHandler struct {
-	us store.UserStore
 	cs store.CourseStore
+	hs store.HandicapStore
 	rs store.RoundStore
+	us store.UserStore
 }
 
 func RegisterDashboardRoutes(r *chi.Mux, pg *store.PostgresStore) {
 	d := chi.NewRouter()
 	h := &dashboardHandler{
-		us: pg,
 		cs: pg,
+		hs: pg,
 		rs: pg,
+		us: pg,
 	}
 
-	d.Use(middleware.JwtAuth)
+	d.Use(middleware.IsAuthenticated)
 	d.Get("/", Make(h.handleDashboard, errorViews.ApiError))
-	d.Get("/score", Make(handleScore, errorViews.ApiError))
-	d.Get("/chart/me", Make(handleChartMe, nil))
+	d.Get("/score", Make(h.handleScore, errorViews.ApiError))
+	d.Get("/chart/me", Make(h.handleChartMe, nil))
 
 	r.Mount("/dashboard", d)
 }
@@ -39,37 +40,37 @@ func (h dashboardHandler) handleDashboard(w http.ResponseWriter, r *http.Request
 		return err
 	}
 
-	rounds, err := h.rs.GetRoundsByUserId(u.Id)
+	rounds, err := h.rs.GetCalcRoundsByUserId(r.Context(), u.Id)
 	if err != nil {
 		return err
 	}
-	slog.Info("Testing %d", len(rounds))
 	return Render(w, r, dashboard.Me(u, rounds))
 }
 
-func handleScore(w http.ResponseWriter, r *http.Request) error {
-	recents :=
-		[]*store.UICourse{
-			{Id: 1, Name: "Manderley On The Green North South", Thumbnail: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYsa5s9fz-agjYOZtBTJDSaDV_78gxOiRTQw&usqp=CAU", Par: "72"},
-			{Id: 2, Name: "Amberwood Golf Club", Thumbnail: "https://stittsvillecentral.ca/wp-content/uploads/amberwood-village-golf-green.jpg", Par: "32"},
+func (h dashboardHandler) handleScore(w http.ResponseWriter, r *http.Request) error {
+	keyword := r.URL.Query().Get("keyword")
+
+	if keyword != "" {
+		recents, err := h.cs.SearchCourses(r.Context(), keyword)
+		if err != nil {
+			return err
 		}
 
-	return Render(w, r, dashboard.ScorePage(recents))
-}
+		return Render(w, r, dashboard.ScorePage(recents, keyword))
 
-type Data struct {
-	Labels []string  `json:"labels"`
-	Data   []float32 `json:"data"`
-	Min    int       `json:"min"`
-	Max    int       `json:"max"`
-}
-
-func handleChartMe(w http.ResponseWriter, _r *http.Request) error {
-	data := Data{
-		Labels: []string{"", "May", "June", "", "July", ""},
-		Data:   []float32{20.1, 20.3, 20.0, 19.2, 18.9, 21},
-		Min:    18,
-		Max:    22,
 	}
+	return Render(w, r, dashboard.ScorePage(nil, ""))
+}
+
+func (h dashboardHandler) handleChartMe(w http.ResponseWriter, r *http.Request) error {
+	u, err := middleware.GetUserFromRequest(r, h.us)
+	if err != nil {
+		return err
+	}
+	data, err := h.hs.GetChartDataForUser(r.Context(), u.Id, 10)
+	if err != nil {
+		return err
+	}
+
 	return writeJSON(w, http.StatusOK, data)
 }
