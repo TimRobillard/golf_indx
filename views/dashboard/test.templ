@@ -1,0 +1,22 @@
+package dashboard
+
+import (
+    "github.com/TimRobillard/handicap_tracker/store"
+    "github.com/TimRobillard/handicap_tracker/views/components"
+    "github.com/TimRobillard/handicap_tracker/views/layout"
+)
+
+templ Test(u *store.UIUser, c *store.Course) {
+    @layouts.Base("test") {
+
+		<main class="h-auto min-h-screen w-screen bg-slate-200 flex flex-col sm:flex-row">
+        @components.SideBar()
+        <section class="w-full h-screen p-4 gap-4 flex flex-col">
+				<h2 class="hidden text-2xl font-semibold text-center">Add Round</h2>
+				<div id="container" class="flex flex-col gap-4">
+        @ScoreForm(u, c){}
+        </div>
+        </section>
+        </main>
+    }
+}

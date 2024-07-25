@@ -10,6 +10,7 @@ templ CourseListError(err errors.APIError) {
 		if err.Msg != "" {
 			<p class="text-red-400">{ err.Msg }</p>
 		} else {
+			// TODO update with other
 			<p class="">No Courses found</p>
 		}
 	</section>

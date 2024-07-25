@@ -3,10 +3,12 @@ package dashboard
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/TimRobillard/handicap_tracker/store"
 	"github.com/TimRobillard/handicap_tracker/views/layout"
 	"github.com/TimRobillard/handicap_tracker/views/components"
+	"github.com/TimRobillard/handicap_tracker/views/courses"
 )
 
 templ Error(errs []string) {
@@ -16,17 +18,17 @@ templ Error(errs []string) {
 }
 
 templ score(num, par string) {
-	<div class="flex flex-row md:flex-col flex-1 gap-0.5">
+	<div class="flex flex-row md:flex-col flex-1">
 		<label for={ fmt.Sprintf("hole-%s", num) } class="min-w-[15%] bg-green-800 text-center font-semibold text-white flex-1 text-sm">{ num }</label>
-		<label for={ fmt.Sprintf("hole-%s", num) } class="min-w-[15%] bg-sky-600 flex-1 text-white font-semibold text-center text-sm">{ par }</label>
-		<input id={ fmt.Sprintf("hole-%s", num) } name={ fmt.Sprintf("hole-%s", num) } placeholder={ par } class="w-full bg-white flex-2 md:flex-1 text-center font-semibold text-sm" required/>
-		<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white text-sm">_</div>
-		<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white text-sm">_</div>
-		<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white text-sm">_</div>
+		<label for={ fmt.Sprintf("hole-%s", num) } class="min-w-[15%] bg-sky-600 flex-1 bordder-sky-600 text-white font-semibold text-center text-sm">{ par }</label>
+		<input id={ fmt.Sprintf("hole-%s", num) } name={ fmt.Sprintf("hole-%s", num) } placeholder={ par } class="w-full bg-white flex-2 md:flex-1 text-center font-semibold text-sm border-b md:border-r border-slate-400" required/>
+		<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white text-sm border-b border-r border-slate-400">_</div>
+		<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white text-sm border-b border-r border-slate-400">_</div>
+		<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white text-sm border-r border-slate-400">_</div>
 	</div>
 }
 
-templ ScoreForm(user *store.User, course *store.Course) {
+templ ScoreForm(user *store.UIUser, course *store.Course) {
 	<form
 		id="score-form"
 		class="flex flex-col gap-4"
@@ -34,77 +36,103 @@ templ ScoreForm(user *store.User, course *store.Course) {
 		hx-ext="loading-states, response-targets"
 		hx-target-401="#score-errors"
 	>
-		<div>
-			<a href="/dashboard/score" tabindex="2">
+		<input hidden name="course_id" value={ strconv.Itoa(course.Id) } />
+		<div class="flex gap-4 items-center">
+			<a href onclick="event.preventDefault(); location+=''" tabindex="2">
 				<i class="fa-solid fa-arrow-left"></i>
 			</a>
-			<h4 class="text-xl">{ course.Name }</h4>
+			<h4 class="text-xl">{ course.GetName().Name }</h4>
 		</div>
-		<div class="flex flex-col md:flex-row bg-slate-900 gap-0.5 p-0.5 rounded-sm">
-			<div class="flex flex-row flex-1 md:flex-col gap-0.5">
-				<div class="min-w-[15%] bg-green-800 font-semibold text-white text-center">Hole</div>
-				<div class="min-w-[15%] bg-sky-600 font-semibold text-white text-center">Par</div>
-				<div class="w-full bg-white font-semibold text-center flex-2 md:flex-1"><span class="block md:hidden">Score</span><span class="hidden md:block">{ user.ScoreCardName() }</span></div>
-				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
-				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
-				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
+		<div class="flex flex-col md:flex-row rounded-md overflow-hidden shadow-md">
+			<div class="flex flex-row flex-1 md:flex-col bg-sky-600">
+				<div class="min-w-[15%] bg-green-800 font-semibold text-white text-center border-b md:border-b-0 border-slate-700">Hole</div>
+				<div class="min-w-[15%] bg-sky-600 font-semibold text-white text-center border-b md:border-b-0 border-slate-700">Par</div>
+				<div class="w-full bg-white font-semibold text-center flex-2 md:flex-1 border-b md:border-r border-slate-800 md:border-slate-400"><span class="block md:hidden">Score</span><span class="hidden md:block">{ user.ScoreCardName() }</span></div>
+				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-b border-r border-slate-400">_</div>
+				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-b border-r border-slate-400">_</div>
+				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-r border-slate-400">_</div>
 			</div>
 			for i, par := range(course.Front) {
 				@score(strconv.Itoa(i+1), strconv.Itoa(par))
 			}
-			<div class="flex flex-row md:flex-col flex-1 gap-0.5">
+			<div class="flex flex-row md:flex-col flex-1">
 				<div class="min-w-[15%] bg-green-800 font-semibold text-white text-center flex-1">Out</div>
 				<div class="min-w-[15%] bg-sky-600 text-center font-semibold text-white flex-1">{ strconv.Itoa(course.FrontPar()) }</div>
-				<div id="score-out" class="w-full bg-white font-semibold text-center flex-2 md:flex-1">0</div>
-				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
-				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
+				<div id="score-out" class="w-full bg-white font-semibold text-center flex-2 md:flex-1 md:border-b border-slate-400">0</div>
+				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-b border-slate-400">_</div>
+				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-b border-slate-400">_</div>
 				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
 			</div>
 		</div>
-		<div class="flex flex-col md:flex-row bg-black gap-0.5 p-0.5 rounded-sm">
-			<div class="flex flex-row flex-1 md:flex-col gap-0.5">
-				<div class="min-w-[15%] bg-green-800 font-semibold text-white text-center">Hole</div>
-				<div class="min-w-[15%] bg-sky-600 font-semibold text-white text-center">Par</div>
-				<div class="w-full bg-white font-semibold text-center flex-2 md:flex-1"><span class="block md:hidden">Score</span><span class="hidden md:block">{ user.ScoreCardName() }</span></div>
-				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
-				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
-				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
+		<div class="flex flex-col md:flex-row rounded-md overflow-hidden shadow-md">
+			<div class="flex flex-row flex-1 md:flex-col">
+				<div class="min-w-[15%] bg-green-800 font-semibold text-white text-center border-b md:border-b-0 border-slate-700">Hole</div>
+				<div class="min-w-[15%] bg-sky-600 font-semibold text-white text-center border-b md:border-b-0 border-slate-700">Par</div>
+				<div class="w-full bg-white font-semibold text-center flex-2 md:flex-1 border-b md:border-r border-slate-700 md:border-slate-400"><span class="block md:hidden">Score</span><span class="hidden md:block">{ user.ScoreCardName() }</span></div>
+				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-b border-r border-slate-400">_</div>
+				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-b border-r border-slate-400">_</div>
+				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-r border-slate-400">_</div>
 			</div>
 			for i, par := range(course.Back) {
 				@score(strconv.Itoa(i+10), strconv.Itoa(par))
 			}
-			<div class="flex flex-row md:flex-col flex-1 gap-0.5">
+			<div class="flex flex-row md:flex-col flex-1">
 				<div class="min-w-[15%] bg-green-800 font-semibold text-white text-center flex-1">In</div>
 				<div class="min-w-[15%] bg-sky-600 text-center font-semibold text-white flex-1">{ strconv.Itoa(course.BackPar()) }</div>
-				<div id="score-in" class="w-full bg-white font-semibold text-center flex-2 md:flex-1">0</div>
-				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
-				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
+				<div id="score-in" class="w-full bg-white font-semibold text-center flex-2 md:flex-1 md:border-b border-slate-400">0</div>
+				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-b border-slate-400">_</div>
+				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-b border-slate-400">_</div>
 				<div class="hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white">_</div>
 			</div>
+		</div>
+		<div class="flex gap-4">
+			<input type="date" name="date" class="flex-1 px-4 py-2 shadow-md rounded-md text-slate-700" value={ time.Now().Format("2006-01-02") } />
+			<input type="time" name="time" class="flex-1 px-4 py-2 shadow-md rounded-md text-slate-700" value={ time.Now().Format("15:04") } />
 		</div>
 		<div id="score-errors"></div>
 		<button
 			type="submit"
-			class="flex justify-center bg-green-800 text-white py-2 font-semibold rounded-md hover:bg-green-900 focus-within:bg-green-900 focus-within:outline-green-900"
+			class="flex justify-center bg-green-800 text-white py-2 font-semibold rounded-md hover:bg-green-900 focus-within:bg-green-900 focus-within:outline-green-900 shadow-md"
 			data-loading-class="opacity-80"
 			data-loading-disabl
 		>Save round of&nbsp<span id="save-tot">72</span></button>
 	</form>
 }
 
-templ ScorePage(recents []*store.UICourse) {
+templ ScorePage(recents []*store.UICourse, keyword string) {
 	@layouts.Base("Add Score | Golf IndX") {
 		<main class="h-auto min-h-screen w-screen bg-slate-200 flex flex-col sm:flex-row">
 			@components.SideBar()
 			<section class="w-full h-screen p-4 gap-4 flex flex-col">
-				<h2 class="text-2xl font-semibold text-center">Add Round</h2>
+				<h2 class="hidden text-2xl font-semibold text-center">Add Round</h2>
 				<div id="container" class="flex flex-col gap-4">
-					<form hx-get="/courses" class="flex gap-1" hx-trigger="submit, input changed delay:500ms from:input" hx-target="#course-list">
-						<input name="keyword" placeholder="Search for course" class="px-4 py-6 rounded-md w-full"/>
+					<form hx-get="/courses" class="flex gap-1 relative" hx-trigger="submit, input changed delay:500ms from:input" hx-target="#course-list">
+						<input name="keyword" placeholder="Search for course" value={ keyword } class="px-4 py-6 rounded-md w-full"/>
+						<button id="search-clear" class="absolute right-4 top-1/2 -mt-3.5 flex items-center justify-center h-7 w-7 ">
+							<i class="fa-solid fa-circle-xmark text-2xl text-slate-400 hover:text-slate-600 transition-all"></i>
+						</button>
 					</form>
-					<div id="course-list"></div>
+					<div id="course-list">
+						@courses.CourseList(recents)
+					</div>
 				</div>
 			</section>
 		</main>
 	}
+	<script>
+		const searchBar = document.querySelector('input[name="keyword"]');
+		const searchClearBtn = document.getElementById('search-clear');
+		const courseList = document.getElementById('course-list')
+
+		searchClearBtn.addEventListener('click', (e) => {
+			e.preventDefault();
+			const path = window.location.protocol + "//" + window.location.host + window.location.pathname;
+			console.log(path)
+			window.history.pushState({
+				path 
+			}, '', path)
+			searchBar.value = '';
+			courseList.innerHTML = "<p>No Courses found</p>" // TODO update with other
+		});
+	</script>
 }

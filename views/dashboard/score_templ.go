@@ -13,9 +13,11 @@ import "bytes"
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/TimRobillard/handicap_tracker/store"
 	"github.com/TimRobillard/handicap_tracker/views/components"
+	"github.com/TimRobillard/handicap_tracker/views/courses"
 	"github.com/TimRobillard/handicap_tracker/views/layout"
 )
 
@@ -40,7 +42,7 @@ func Error(errs []string) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(e)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 14, Col: 10}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 16, Col: 10}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -71,14 +73,14 @@ func score(num, par string) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-row md:flex-col flex-1 gap-0.5\"><label for=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-row md:flex-col flex-1\"><label for=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("hole-%s", num))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 20, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 22, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -91,7 +93,7 @@ func score(num, par string) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(num)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 20, Col: 135}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 22, Col: 135}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -104,20 +106,20 @@ func score(num, par string) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("hole-%s", num))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 21, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 23, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"min-w-[15%] bg-sky-600 flex-1 text-white font-semibold text-center text-sm\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"min-w-[15%] bg-sky-600 flex-1 bordder-sky-600 text-white font-semibold text-center text-sm\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(par)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 21, Col: 133}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 23, Col: 149}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -130,7 +132,7 @@ func score(num, par string) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("hole-%s", num))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 22, Col: 41}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 24, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -143,7 +145,7 @@ func score(num, par string) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("hole-%s", num))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 22, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 24, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -156,13 +158,13 @@ func score(num, par string) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(par)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 22, Col: 98}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 24, Col: 98}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"w-full bg-white flex-2 md:flex-1 text-center font-semibold text-sm\" required><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white text-sm\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white text-sm\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white text-sm\">_</div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"w-full bg-white flex-2 md:flex-1 text-center font-semibold text-sm border-b md:border-r border-slate-400\" required><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white text-sm border-b border-r border-slate-400\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white text-sm border-b border-r border-slate-400\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white text-sm border-r border-slate-400\">_</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -173,7 +175,7 @@ func score(num, par string) templ.Component {
 	})
 }
 
-func ScoreForm(user *store.User, course *store.Course) templ.Component {
+func ScoreForm(user *store.UIUser, course *store.Course) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -186,33 +188,46 @@ func ScoreForm(user *store.User, course *store.Course) templ.Component {
 			templ_7745c5c3_Var11 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form id=\"score-form\" class=\"flex flex-col gap-4\" hx-post=\"/rounds\" hx-ext=\"loading-states, response-targets\" hx-target-401=\"#score-errors\"><div><a href=\"/dashboard/score\" tabindex=\"2\"><i class=\"fa-solid fa-arrow-left\"></i></a><h4 class=\"text-xl\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form id=\"score-form\" class=\"flex flex-col gap-4\" hx-post=\"/rounds\" hx-ext=\"loading-states, response-targets\" hx-target-401=\"#score-errors\"><input hidden name=\"course_id\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var12 string
-		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(course.Name)
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(course.Id))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 41, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 39, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h4></div><div class=\"flex flex-col md:flex-row bg-slate-900 gap-0.5 p-0.5 rounded-sm\"><div class=\"flex flex-row flex-1 md:flex-col gap-0.5\"><div class=\"min-w-[15%] bg-green-800 font-semibold text-white text-center\">Hole</div><div class=\"min-w-[15%] bg-sky-600 font-semibold text-white text-center\">Par</div><div class=\"w-full bg-white font-semibold text-center flex-2 md:flex-1\"><span class=\"block md:hidden\">Score</span><span class=\"hidden md:block\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div class=\"flex gap-4 items-center\"><a href onclick=\"event.preventDefault(); location+=&#39;&#39;\" tabindex=\"2\"><i class=\"fa-solid fa-arrow-left\"></i></a><h4 class=\"text-xl\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var13 string
-		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(user.ScoreCardName())
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(course.GetName().Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 47, Col: 170}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 44, Col: 46}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white\">_</div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h4></div><div class=\"flex flex-col md:flex-row rounded-md overflow-hidden shadow-md\"><div class=\"flex flex-row flex-1 md:flex-col bg-sky-600\"><div class=\"min-w-[15%] bg-green-800 font-semibold text-white text-center border-b md:border-b-0 border-slate-700\">Hole</div><div class=\"min-w-[15%] bg-sky-600 font-semibold text-white text-center border-b md:border-b-0 border-slate-700\">Par</div><div class=\"w-full bg-white font-semibold text-center flex-2 md:flex-1 border-b md:border-r border-slate-800 md:border-slate-400\"><span class=\"block md:hidden\">Score</span><span class=\"hidden md:block\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var14 string
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(user.ScoreCardName())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 50, Col: 228}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-b border-r border-slate-400\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-b border-r border-slate-400\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-r border-slate-400\">_</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -222,33 +237,33 @@ func ScoreForm(user *store.User, course *store.Course) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-row md:flex-col flex-1 gap-0.5\"><div class=\"min-w-[15%] bg-green-800 font-semibold text-white text-center flex-1\">Out</div><div class=\"min-w-[15%] bg-sky-600 text-center font-semibold text-white flex-1\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var14 string
-		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(course.FrontPar()))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 57, Col: 117}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div id=\"score-out\" class=\"w-full bg-white font-semibold text-center flex-2 md:flex-1\">0</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white\">_</div></div></div><div class=\"flex flex-col md:flex-row bg-black gap-0.5 p-0.5 rounded-sm\"><div class=\"flex flex-row flex-1 md:flex-col gap-0.5\"><div class=\"min-w-[15%] bg-green-800 font-semibold text-white text-center\">Hole</div><div class=\"min-w-[15%] bg-sky-600 font-semibold text-white text-center\">Par</div><div class=\"w-full bg-white font-semibold text-center flex-2 md:flex-1\"><span class=\"block md:hidden\">Score</span><span class=\"hidden md:block\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-row md:flex-col flex-1\"><div class=\"min-w-[15%] bg-green-800 font-semibold text-white text-center flex-1\">Out</div><div class=\"min-w-[15%] bg-sky-600 text-center font-semibold text-white flex-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var15 string
-		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(user.ScoreCardName())
+		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(course.FrontPar()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 68, Col: 170}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 60, Col: 117}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white\">_</div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div id=\"score-out\" class=\"w-full bg-white font-semibold text-center flex-2 md:flex-1 md:border-b border-slate-400\">0</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-b border-slate-400\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-b border-slate-400\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white\">_</div></div></div><div class=\"flex flex-col md:flex-row rounded-md overflow-hidden shadow-md\"><div class=\"flex flex-row flex-1 md:flex-col\"><div class=\"min-w-[15%] bg-green-800 font-semibold text-white text-center border-b md:border-b-0 border-slate-700\">Hole</div><div class=\"min-w-[15%] bg-sky-600 font-semibold text-white text-center border-b md:border-b-0 border-slate-700\">Par</div><div class=\"w-full bg-white font-semibold text-center flex-2 md:flex-1 border-b md:border-r border-slate-700 md:border-slate-400\"><span class=\"block md:hidden\">Score</span><span class=\"hidden md:block\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var16 string
+		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(user.ScoreCardName())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 71, Col: 228}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-b border-r border-slate-400\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-b border-r border-slate-400\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-r border-slate-400\">_</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -258,20 +273,46 @@ func ScoreForm(user *store.User, course *store.Course) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-row md:flex-col flex-1 gap-0.5\"><div class=\"min-w-[15%] bg-green-800 font-semibold text-white text-center flex-1\">In</div><div class=\"min-w-[15%] bg-sky-600 text-center font-semibold text-white flex-1\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-row md:flex-col flex-1\"><div class=\"min-w-[15%] bg-green-800 font-semibold text-white text-center flex-1\">In</div><div class=\"min-w-[15%] bg-sky-600 text-center font-semibold text-white flex-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var16 string
-		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(course.BackPar()))
+		var templ_7745c5c3_Var17 string
+		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(course.BackPar()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 78, Col: 116}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 81, Col: 116}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div id=\"score-in\" class=\"w-full bg-white font-semibold text-center flex-2 md:flex-1\">0</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white\">_</div></div></div><div id=\"score-errors\"></div><button type=\"submit\" class=\"flex justify-center bg-green-800 text-white py-2 font-semibold rounded-md hover:bg-green-900 focus-within:bg-green-900 focus-within:outline-green-900\" data-loading-class=\"opacity-80\" data-loading-disabl>Save round of&nbsp<span id=\"save-tot\">72</span></button></form>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div id=\"score-in\" class=\"w-full bg-white font-semibold text-center flex-2 md:flex-1 md:border-b border-slate-400\">0</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-b border-slate-400\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white border-b border-slate-400\">_</div><div class=\"hidden md:block w-full bg-white flex-2 md:flex-1 text-center font-semibold text-white\">_</div></div></div><div class=\"flex gap-4\"><input type=\"date\" name=\"date\" class=\"flex-1 px-4 py-2 shadow-md rounded-md text-slate-700\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var18 string
+		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(time.Now().Format("2006-01-02"))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 89, Col: 134}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"> <input type=\"time\" name=\"time\" class=\"flex-1 px-4 py-2 shadow-md rounded-md text-slate-700\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var19 string
+		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(time.Now().Format("15:04"))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 90, Col: 129}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></div><div id=\"score-errors\"></div><button type=\"submit\" class=\"flex justify-center bg-green-800 text-white py-2 font-semibold rounded-md hover:bg-green-900 focus-within:bg-green-900 focus-within:outline-green-900 shadow-md\" data-loading-class=\"opacity-80\" data-loading-disabl>Save round of&nbsp<span id=\"save-tot\">72</span></button></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -282,7 +323,7 @@ func ScoreForm(user *store.User, course *store.Course) templ.Component {
 	})
 }
 
-func ScorePage(recents []*store.UICourse) templ.Component {
+func ScorePage(recents []*store.UICourse, keyword string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -290,12 +331,12 @@ func ScorePage(recents []*store.UICourse) templ.Component {
 			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var17 == nil {
-			templ_7745c5c3_Var17 = templ.NopComponent
+		templ_7745c5c3_Var20 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var20 == nil {
+			templ_7745c5c3_Var20 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Var18 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var21 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 			if !templ_7745c5c3_IsBuffer {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
@@ -309,7 +350,28 @@ func ScorePage(recents []*store.UICourse) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section class=\"w-full h-screen p-4 gap-4 flex flex-col\"><h2 class=\"text-2xl font-semibold text-center\">Add Round</h2><div id=\"container\" class=\"flex flex-col gap-4\"><form hx-get=\"/courses\" class=\"flex gap-1\" hx-trigger=\"submit, input changed delay:500ms from:input\" hx-target=\"#course-list\"><input name=\"keyword\" placeholder=\"Search for course\" class=\"px-4 py-6 rounded-md w-full\"></form><div id=\"course-list\"></div></div></section></main>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section class=\"w-full h-screen p-4 gap-4 flex flex-col\"><h2 class=\"hidden text-2xl font-semibold text-center\">Add Round</h2><div id=\"container\" class=\"flex flex-col gap-4\"><form hx-get=\"/courses\" class=\"flex gap-1 relative\" hx-trigger=\"submit, input changed delay:500ms from:input\" hx-target=\"#course-list\"><input name=\"keyword\" placeholder=\"Search for course\" value=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var22 string
+			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(keyword)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/score.templ`, Line: 110, Col: 75}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"px-4 py-6 rounded-md w-full\"> <button id=\"search-clear\" class=\"absolute right-4 top-1/2 -mt-3.5 flex items-center justify-center h-7 w-7 \"><i class=\"fa-solid fa-circle-xmark text-2xl text-slate-400 hover:text-slate-600 transition-all\"></i></button></form><div id=\"course-list\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = courses.CourseList(recents).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div></section></main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -318,7 +380,11 @@ func ScorePage(recents []*store.UICourse) templ.Component {
 			}
 			return templ_7745c5c3_Err
 		})
-		templ_7745c5c3_Err = layouts.Base("Add Score | Golf IndX").Render(templ.WithChildren(ctx, templ_7745c5c3_Var18), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layouts.Base("Add Score | Golf IndX").Render(templ.WithChildren(ctx, templ_7745c5c3_Var21), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\n\t\tconst searchBar = document.querySelector('input[name=\"keyword\"]');\n\t\tconst searchClearBtn = document.getElementById('search-clear');\n\t\tconst courseList = document.getElementById('course-list')\n\n\t\tsearchClearBtn.addEventListener('click', (e) => {\n\t\t\te.preventDefault();\n\t\t\tconst path = window.location.protocol + \"//\" + window.location.host + window.location.pathname;\n\t\t\tconsole.log(path)\n\t\t\twindow.history.pushState({\n\t\t\t\tpath \n\t\t\t}, '', path)\n\t\t\tsearchBar.value = '';\n\t\t\tcourseList.innerHTML = \"<p>No Courses found</p>\" // TODO update with other\n\t\t});\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -80,7 +80,7 @@ templ Me(u *store.UIUser, rounds [20]*store.CalcRound) {
 						}
 					});
 					const data = await response.json();
-					if (data) {
+					if (data && data.data.length) {
 					const ctx = document.getElementById('myChart');
 					new Chart(ctx, {
 						type: 'line',
@@ -135,32 +135,33 @@ templ Me(u *store.UIUser, rounds [20]*store.CalcRound) {
 					document.getElementById('chart-spinner').remove()
 				}
 			});
-			const scoreForm = document.getElementById('score-form');
-			const scoreInputs = document.querySelectorAll('#score-form input');
-			const scoreOut = document.getElementById('score-out');
-			const scoreIn = document.getElementById('score-in');
-			const scoreTot = document.getElementById('score-tot');
-			const saveTot = document.getElementById('save-tot');
+			// TODO move to score form
+			// const scoreForm = document.getElementById('score-form');
+			// const scoreInputs = document.querySelectorAll('#score-form input');
+			// const scoreOut = document.getElementById('score-out');
+			// const scoreIn = document.getElementById('score-in');
+			// const scoreTot = document.getElementById('score-tot');
+			// const saveTot = document.getElementById('save-tot');
 
-			scoreForm.addEventListener('input', calculateScore)
+			// scoreForm.addEventListener('input', calculateScore)
 
-			function calculateScore() {
-				let outVal = 0;
-				let inVal = 0;
-				scoreInputs.forEach(input => {
-					const hole = Number(input.id.split('-')[1]);
-					const value = Number(input.value);
-					if (hole < 10) {
-						outVal += value;
-						return;
-					}
-					inVal += value;
-				})
-				scoreOut.innerHTML = outVal;
-				scoreIn.innerHTML = inVal;
-				scoreTot.innerHTML = outVal + inVal;
-				saveTot.innerHTML = outVal + inVal;
-			}
+			// function calculateScore() {
+			// 	let outVal = 0;
+			// 	let inVal = 0;
+			// 	scoreInputs.forEach(input => {
+			// 		const hole = Number(input.id.split('-')[1]);
+			// 		const value = Number(input.value);
+			// 		if (hole < 10) {
+			// 			outVal += value;
+			// 			return;
+			// 		}
+			// 		inVal += value;
+			// 	})
+			// 	scoreOut.innerHTML = outVal;
+			// 	scoreIn.innerHTML = inVal;
+			// 	scoreTot.innerHTML = outVal + inVal;
+			// 	saveTot.innerHTML = outVal + inVal;
+			// }
 		</script>
 	</html>
 }
