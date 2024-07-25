@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
@@ -30,11 +31,11 @@ func GetUserFromRequest(r *http.Request, us store.UserStore) (*store.UIUser, err
 	return us.GetUIUserById(userId)
 }
 
-func JwtAuth(next http.Handler) http.Handler {
+func AddUserToContext(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("_q")
 		if err != nil {
-			http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
+			next.ServeHTTP(w, r)
 			return
 		}
 
@@ -45,9 +46,9 @@ func JwtAuth(next http.Handler) http.Handler {
 				return []byte(os.Getenv("JWT_SECRET")), nil
 			},
 		)
-		fmt.Printf("Valid Token %t", token.Valid)
+
 		if err != nil || !token.Valid {
-			http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
+			next.ServeHTTP(w, r)
 			return
 		}
 
@@ -55,6 +56,17 @@ func JwtAuth(next http.Handler) http.Handler {
 
 		c := context.WithValue(r.Context(), ContextId, claims.Id)
 		next.ServeHTTP(w, r.WithContext(c))
+	})
+}
+
+func IsAuthenticated(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		userId := r.Context().Value(ContextId)
+		if userId == nil {
+			http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
+			return
+		}
+		next.ServeHTTP(w, r)
 	})
 }
 
@@ -66,6 +78,6 @@ func GenerateToken(id int) (string, error) {
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	fmt.Println(token)
+
 	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 }

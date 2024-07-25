@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/TimRobillard/handicap_tracker/handlers"
+	"github.com/TimRobillard/handicap_tracker/handlers/middleware"
 	"github.com/TimRobillard/handicap_tracker/store"
 	"github.com/TimRobillard/handicap_tracker/store/seed"
 	"github.com/TimRobillard/handicap_tracker/views/errorViews"
@@ -33,7 +34,9 @@ func main() {
 
 	router := chi.NewMux()
 
+	router.Use(middleware.AddUserToContext)
 	router.Handle("/public/*", public())
+
 	router.Get("/", handlers.Make(handlers.HandleHome, errorViews.ApiError))
 
 	handlers.RegisterAuthRoutes(router, pg)
