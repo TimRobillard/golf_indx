@@ -9,7 +9,6 @@ import (
 	"github.com/TimRobillard/handicap_tracker/handlers"
 	"github.com/TimRobillard/handicap_tracker/handlers/middleware"
 	"github.com/TimRobillard/handicap_tracker/store"
-	"github.com/TimRobillard/handicap_tracker/store/seed"
 	"github.com/TimRobillard/handicap_tracker/views/errorViews"
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
@@ -24,12 +23,6 @@ func main() {
 
 	if err != nil {
 		log.Fatal(err.Error())
-	}
-
-	if false {
-		log.Default().Println("Seeding db...")
-		seed.Seed(pg)
-		return
 	}
 
 	router := chi.NewMux()
