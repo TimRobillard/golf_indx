@@ -99,14 +99,6 @@ func (u User) ValidatePassword(password string) bool {
 	return err == nil
 }
 
-func (u User) ScoreCardName() string {
-	c := cases.Title(language.Und)
-	if len(u.Username) > 4 {
-		return c.String(u.Username[:4]) + "..."
-	}
-	return c.String(u.Username)
-}
-
 func (u User) ToUI() *UIUser {
 	c := cases.Title(language.Und)
 	return &UIUser{
@@ -115,4 +107,12 @@ func (u User) ToUI() *UIUser {
 		Indx:       "20.3",
 		ProfilePic: u.ProfilePic,
 	}
+}
+
+func (u UIUser) ScoreCardName() string {
+	c := cases.Title(language.Und)
+	if len(u.Username) > 4 {
+		return c.String(u.Username[:4]) + "..."
+	}
+	return c.String(u.Username)
 }
