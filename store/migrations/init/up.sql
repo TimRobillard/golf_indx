@@ -43,9 +43,19 @@ CREATE TABLE
         date TIMESTAMP,
         created_at TIMESTAMP DEFAULT NOW (),
         updated_at TIMESTAMP DEFAULT NOW (),
-        FOREIGN KEY (course_id) REFERENCES course (id),
-        FOREIGN KEY (user_id) REFERENCES users (id)
+        FOREIGN KEY (course_id) REFERENCES course (id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
     );
+
+CREATE TABLE IF NOT EXISTS handicap(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER,
+    indx DECIMAL,
+    date TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW (),
+    updated_at TIMESTAMP DEFAULT NOW (),
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
 
 BEGIN TRANSACTION;
 
@@ -63,40 +73,40 @@ VALUES
     (
         'manderley central north',
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYsa5s9fz-agjYOZtBTJDSaDV_78gxOiRTQw&usqp=CAU',
-        110,
         67.1,
+        110,
         '{5, 3, 5, 3, 4, 3, 5, 4, 4}',
         '{5, 4, 4, 3, 5, 4, 3, 4, 4}'
     ),
     (
         'manderley north south',
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYsa5s9fz-agjYOZtBTJDSaDV_78gxOiRTQw&usqp=CAU',
-        112,
         65.3,
+        112,
         '{5, 4, 4, 3, 5, 4, 3, 4, 4}',
         '{4, 4, 3, 4, 4, 3, 5, 3, 5}'
     ),
     (
         'dragonfly golf links',
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYsa5s9fz-agjYOZtBTJDSaDV_78gxOiRTQw&usqp=CAU',
-        123,
         69.9,
+        123,
         '{4, 4, 4, 4, 3, 5, 3, 4, 5}',
         '{4, 5, 4, 3, 4, 5, 4, 4, 3}'
     ),
     (
         'cedarhill',
         'https://stittsvillecentral.ca/wp-content/uploads/amberwood-village-golf-green.jpg',
-        112,
         67.6,
+        112,
         '{4, 4, 5, 4, 3, 4, 4, 4, 3}',
         '{4, 4, 4, 4, 3, 3, 4, 5, 4}'
     ),
     (
         'amberwood',
         'https://stittsvillecentral.ca/wp-content/uploads/amberwood-village-golf-green.jpg',
-        99,
         31.2,
+        99,
         '{3, 4, 4, 3, 4, 3, 3, 4, 4}',
         '{}'
     );
@@ -114,7 +124,7 @@ VALUES
     (
         1,
         3,
-        '{5, 5, 8, 5, 2, 5, 4, 5}',
+        '{5, 5, 8, 5, 2, 5, 4, 5, 5}',
         '{5, 5, 5, 4, 4, 8, 6, 6, 3}',
         '2024-06-24'
     ),
