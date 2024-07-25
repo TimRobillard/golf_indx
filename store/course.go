@@ -1,6 +1,7 @@
 package store
 
 import (
+	"context"
 	"strconv"
 	"strings"
 
@@ -10,8 +11,9 @@ import (
 )
 
 type CourseStore interface {
-	CreateCourse(name, thumbnail string, rating, slope float32, front, back [9]int) (*Course, error)
-	SearchCourses(text string) ([]*UICourse, error)
+	CreateCourse(ctx context.Context, name, thumbnail string, rating, slope float64, front, back [9]int) (*Course, error)
+	GetCourseById(context.Context, int) (*Course, error)
+	SearchCourses(context.Context, string) ([]*UICourse, error)
 }
 
 type Course struct {
@@ -19,8 +21,8 @@ type Course struct {
 	Name      string  `json:"name"`
 	Front     [9]int  `json:"front"`
 	Back      [9]int  `json:"back"`
-	Slope     float32 `json:"slope"`
-	Rating    float32 `json:"rating"`
+	Slope     float64 `json:"slope"`
+	Rating    float64 `json:"rating"`
 	Thumbnail string  `json:"thumbnail"`
 }
 
@@ -69,7 +71,7 @@ func (c Course) Par() int {
 	return c.FrontPar() + c.BackPar()
 }
 
-func (pg PostgresStore) CreateCourse(name, thumbnail string, rating, slope float32, front, back [9]int) (*Course, error) {
+func (pg PostgresStore) CreateCourse(ctx context.Context, name, thumbnail string, rating, slope float64, front, back [9]int) (*Course, error) {
 	name = strings.ToLower(name)
 
 	query := `INSERT INTO course(name, thumbnail, front, back, rating, slope)
@@ -78,7 +80,7 @@ func (pg PostgresStore) CreateCourse(name, thumbnail string, rating, slope float
 
 	var id int
 
-	if err := pg.db.QueryRow(query, name, thumbnail, pq.Array(front), pq.Array(back), rating, slope).Scan(&id); err != nil {
+	if err := pg.db.QueryRowContext(ctx, query, name, thumbnail, pq.Array(front), pq.Array(back), rating, slope).Scan(&id); err != nil {
 		return nil, err
 	}
 
@@ -93,7 +95,45 @@ func (pg PostgresStore) CreateCourse(name, thumbnail string, rating, slope float
 	}, nil
 }
 
-func (pg PostgresStore) SearchCourses(text string) ([]*UICourse, error) {
+func (pg PostgresStore) GetCourseById(ctx context.Context, id int) (*Course, error) {
+	query := `
+	SELECT 
+		id,
+		name,
+		front,
+		back,
+		rating,
+		slope,
+		thumbnail
+	FROM course
+	WHERE id = $1;`
+
+	rows, err := pg.db.QueryContext(ctx, query, id)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	course := &Course{}
+
+	for rows.Next() {
+		var f, b []int32
+		if err = rows.Scan(&course.Id, &course.Name, (*pq.Int32Array)(&f), (*pq.Int32Array)(&b), &course.Rating, &course.Slope, &course.Thumbnail); err != nil {
+			return nil, err
+		}
+
+		err = convertNine(f, &course.Front, err)
+		err = convertNine(b, &course.Back, err)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return course, nil
+}
+
+func (pg PostgresStore) SearchCourses(ctx context.Context, text string) ([]*UICourse, error) {
 	query := `SELECT 
 		id,
 		name,
@@ -105,7 +145,7 @@ func (pg PostgresStore) SearchCourses(text string) ([]*UICourse, error) {
 	`
 
 	var courses []*UICourse
-	rows, err := pg.db.Query(query, text)
+	rows, err := pg.db.QueryContext(ctx, query, text)
 
 	if err != nil {
 		return courses, err
@@ -116,7 +156,7 @@ func (pg PostgresStore) SearchCourses(text string) ([]*UICourse, error) {
 
 	for rows.Next() {
 		var c UICourse
-		var rank float32
+		var rank float64
 		if err := rows.Scan(&c.Id, &c.Name, &c.Thumbnail, &rank); err != nil {
 			return courses, err
 		}
