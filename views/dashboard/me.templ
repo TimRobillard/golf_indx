@@ -1,6 +1,8 @@
 package dashboard
 
 import (
+	"os"
+
 	"github.com/TimRobillard/handicap_tracker/views/components"
 	"github.com/TimRobillard/handicap_tracker/store"
 )
@@ -69,16 +71,14 @@ templ Me(u *store.UIUser, rounds [20]*store.CalcRound) {
 				</section>
 				<div class="hidden text-green-400">generate class</div>
 			</main>
+			<div id="app-url" class="hidden" app-url={os.Getenv("APP_URL")}></div> 
 		</body>
 		<script>
+		 const appUrl = document.getElementById('app-url').getAttribute('app-url');
 			document.addEventListener('DOMContentLoaded', 
 			async () => {
 				try {
-					const response = await fetch('http://127.0.0.1:7331/dashboard/chart/me', {
-						headers: {
-							"Accept": "application/json"
-						}
-					});
+					const response = await fetch(`${appUrl}/dashboard/chart/me`);
 					const data = await response.json();
 					if (data && data.data.length) {
 					const ctx = document.getElementById('myChart');
