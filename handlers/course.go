@@ -28,7 +28,6 @@ func RegisterCourseRoutes(router *chi.Mux, pg *store.PostgresStore) {
 	r.Use(middleware.IsAuthenticated)
 	r.Get("/", Make(c.handleGetCourseList, courses.CourseListError))
 	r.Get("/score/{id}", Make(c.handleGetCourseForScore, nil))
-	r.Get("/test", Make(c.handleTest, nil))
 
 	router.Mount("/courses", r)
 }
@@ -66,18 +65,4 @@ func (c courseHandler) handleGetCourseForScore(w http.ResponseWriter, r *http.Re
 	}
 
 	return Render(w, r, dashboard.ScoreForm(u, course))
-}
-
-func (c courseHandler) handleTest(w http.ResponseWriter, r *http.Request) error {
-	u, err := middleware.GetUserFromRequest(r, c.us)
-	if err != nil {
-		return err
-	}
-
-	course, err := c.cs.GetCourseById(r.Context(), 1)
-	if err != nil {
-		return err
-	}
-
-	return Render(w, r, dashboard.Test(u, course))
 }

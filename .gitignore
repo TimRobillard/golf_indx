@@ -2,4 +2,4 @@
 bin
 tmp
 *.code-workspace
-views/*templ.go
+views/**/*_templ.go
