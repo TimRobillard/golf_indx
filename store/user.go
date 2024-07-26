@@ -79,7 +79,7 @@ func (pg PostgresStore) GetUIUserById(ctx context.Context, id int) (*UIUser, err
 		Id:         u.Id,
 		Username:   c.String(u.Username),
 		Indx:       fmt.Sprintf("%.1f", indx),
-		LastScore: strconv.Itoa(lastRound),
+		LastScore:  strconv.Itoa(lastRound),
 		ProfilePic: u.ProfilePic,
 	}, nil
 }

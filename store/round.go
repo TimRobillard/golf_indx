@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"strconv"
@@ -130,6 +131,8 @@ func (pg PostgresStore) GetRoundsForUser(ctx context.Context, u *UIUser) ([20]*R
 		return rounds, err
 	}
 
+	defer rows.Close()
+
 	i := 0
 	for rows.Next() {
 		round := &Round{
@@ -161,6 +164,10 @@ func (pg PostgresStore) GetRoundsForUser(ctx context.Context, u *UIUser) ([20]*R
 		i++
 	}
 
+	if err = rows.Err(); err != nil {
+		return rounds, err
+	}
+
 	return rounds, nil
 }
 
@@ -185,6 +192,8 @@ func (pg PostgresStore) GetCalcRoundsByUserId(ctx context.Context, userId int) (
 		return rounds, err
 	}
 
+	defer rows.Close()
+
 	i := 0
 	for rows.Next() {
 		var courseName string
@@ -208,6 +217,10 @@ func (pg PostgresStore) GetCalcRoundsByUserId(ctx context.Context, userId int) (
 		}
 	}
 
+	if err = rows.Err(); err != nil {
+		return rounds, err
+	}
+
 	return rounds, nil
 }
 
@@ -217,14 +230,20 @@ func (pg PostgresStore) GetLastRoundScoreByUserId(ctx context.Context, userId in
 		front, back
 	FROM round 
 	WHERE user_id = $1
-	ORDER BY r.date DESC, r.id DESC
+	ORDER BY date DESC, id DESC
 	LIMIT 1;`
 
 	var front, back []int32
 	err := pg.db.QueryRowContext(ctx, query, userId).Scan((*pq.Int32Array)(&front), (*pq.Int32Array)(&back))
-
-	if len(front) != 9 || len(back) != 0 {
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, nil
+		}
 		return 0, err
+	}
+
+	if len(front) != 9 || len(back) != 9 {
+		return 0, fmt.Errorf("invalid round length; f: %d, b: %d", len(front), len(back))
 	}
 
 	score := 0

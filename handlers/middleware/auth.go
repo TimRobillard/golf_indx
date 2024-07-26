@@ -22,6 +22,14 @@ const (
 	ContextId ContextKey = "userId"
 )
 
+func GetUserIdFromRequest(r *http.Request, us store.UserStore) (int, error) {
+	userId, ok := r.Context().Value(ContextId).(int)
+	if !ok {
+		return 0, fmt.Errorf("no user id found in context")
+	}
+	return userId, nil
+}
+
 func GetUserFromRequest(r *http.Request, us store.UserStore) (*store.UIUser, error) {
 	userId, ok := r.Context().Value(ContextId).(int)
 	if !ok {

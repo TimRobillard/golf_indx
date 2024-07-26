@@ -12,8 +12,9 @@ import (
 
 type CourseStore interface {
 	CreateCourse(ctx context.Context, name, thumbnail string, rating, slope float64, front, back [9]int) (*Course, error)
-	GetCourseById(context.Context, int) (*Course, error)
-	SearchCourses(context.Context, string) ([]*UICourse, error)
+	GetCourseById(ctx context.Context, userId int) (*Course, error)
+	RecentCourses(ctx context.Context, userId int) ([]*UICourse, error)
+	SearchCourses(ctx context.Context, keyword string) ([]*UICourse, error)
 }
 
 type Course struct {
@@ -108,29 +109,65 @@ func (pg PostgresStore) GetCourseById(ctx context.Context, id int) (*Course, err
 	FROM course
 	WHERE id = $1;`
 
-	rows, err := pg.db.QueryContext(ctx, query, id)
+	course := &Course{}
+	var f, b []int32
+	err := pg.db.QueryRowContext(ctx, query, id).Scan(&course.Id, &course.Name, (*pq.Int32Array)(&f), (*pq.Int32Array)(&b), &course.Rating, &course.Slope, &course.Thumbnail)
+	err = convertNine(f, &course.Front, err)
+	err = convertNine(b, &course.Back, err)
 	if err != nil {
 		return nil, err
 	}
 
-	defer rows.Close()
+	return course, nil
+}
 
-	course := &Course{}
+func (pg PostgresStore) RecentCourses(ctx context.Context, userId int) ([]*UICourse, error) {
+	query := `SELECT DISTINCT 
+		course_id, 
+		name, 
+		thumbnail 
+	FROM (
+		SELECT 
+			r.id, 
+			r.date, 
+			c.name, 
+			c.id as course_id, 
+			c.thumbnail 
+		FROM round r 
+		LEFT JOIN course c 
+		ON r.course_id = c.id 
+		WHERE r.user_id = $1 
+		ORDER BY r.date DESC, r.id DESC 
+		LIMIT 50
+	) c 
+	LIMIT 5;
+	`
+
+	var courses []*UICourse
+	rows, err := pg.db.QueryContext(ctx, query, userId)
+
+	if err != nil {
+		return courses, err
+	}
+
+	defer rows.Close()
+	caser := cases.Title(language.Und)
 
 	for rows.Next() {
-		var f, b []int32
-		if err = rows.Scan(&course.Id, &course.Name, (*pq.Int32Array)(&f), (*pq.Int32Array)(&b), &course.Rating, &course.Slope, &course.Thumbnail); err != nil {
-			return nil, err
-		}
-
-		err = convertNine(f, &course.Front, err)
-		err = convertNine(b, &course.Back, err)
-		if err != nil {
-			return nil, err
+		var c UICourse
+		if err = rows.Scan(&c.Id, &c.Name, &c.Thumbnail); err != nil {
+			return courses, err
+		} else {
+			c.Name = caser.String(c.Name)
+			courses = append(courses, &c)
 		}
 	}
 
-	return course, nil
+	if err = rows.Err(); err != nil {
+		return courses, err
+	}
+
+	return courses, nil
 }
 
 func (pg PostgresStore) SearchCourses(ctx context.Context, text string) ([]*UICourse, error) {
@@ -139,9 +176,9 @@ func (pg PostgresStore) SearchCourses(ctx context.Context, text string) ([]*UICo
 		name,
 		thumbnail,
 		similarity(name, $1) as rank
-		FROM course
-		ORDER BY rank DESC
-		LIMIT 10;
+	FROM course
+	ORDER BY rank DESC
+	LIMIT 10;
 	`
 
 	var courses []*UICourse

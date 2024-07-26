@@ -49,6 +49,8 @@ func (pg PostgresStore) GetChartDataForUser(ctx context.Context, userId, limit i
 		return nil, err
 	}
 
+	defer rows.Close()
+
 	for rows.Next() {
 		var indx float64
 		var date time.Time
@@ -65,6 +67,10 @@ func (pg PostgresStore) GetChartDataForUser(ctx context.Context, userId, limit i
 		}
 
 		dates = append(dates, date)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
 	}
 
 	slices.Reverse(chart.Data)

@@ -49,25 +49,34 @@ func (h dashboardHandler) handleDashboard(w http.ResponseWriter, r *http.Request
 
 func (h dashboardHandler) handleScore(w http.ResponseWriter, r *http.Request) error {
 	keyword := r.URL.Query().Get("keyword")
+	userId, err := middleware.GetUserIdFromRequest(r, h.us)
+	if err != nil {
+		return err
+	}
 
 	if keyword != "" {
-		recents, err := h.cs.SearchCourses(r.Context(), keyword)
+		courses, err := h.cs.SearchCourses(r.Context(), keyword)
 		if err != nil {
 			return err
 		}
 
-		return Render(w, r, dashboard.ScorePage(recents, keyword))
+		return Render(w, r, dashboard.ScorePage(courses, keyword))
 
 	}
-	return Render(w, r, dashboard.ScorePage(nil, ""))
-}
 
-func (h dashboardHandler) handleChartMe(w http.ResponseWriter, r *http.Request) error {
-	u, err := middleware.GetUserFromRequest(r, h.us)
+	recents, err := h.cs.RecentCourses(r.Context(), userId)
 	if err != nil {
 		return err
 	}
-	data, err := h.hs.GetChartDataForUser(r.Context(), u.Id, 10)
+	return Render(w, r, dashboard.ScorePage(recents, ""))
+}
+
+func (h dashboardHandler) handleChartMe(w http.ResponseWriter, r *http.Request) error {
+	userId, err := middleware.GetUserIdFromRequest(r, h.us)
+	if err != nil {
+		return err
+	}
+	data, err := h.hs.GetChartDataForUser(r.Context(), userId, 10)
 	if err != nil {
 		return err
 	}
