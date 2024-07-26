@@ -96,6 +96,7 @@ func (pg PostgresStore) GetUserByUsername(ctx context.Context, username string) 
 	query := `SELECT id, username, password, profile_pic
 	FROM users WHERE username = $1 AND is_deleted = false;`
 
+	username = strings.ToLower(username)
 	user := new(User)
 	err := pg.db.QueryRowContext(ctx, query, username).Scan(&user.Id, &user.Username, &user.password, &user.ProfilePic)
 
