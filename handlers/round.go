@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"log/slog"
 	"net/http"
 	"strconv"
 
@@ -49,7 +48,6 @@ func (h roundHandler) handlePostRound(w http.ResponseWriter, r *http.Request) er
 
 	c, err := h.cs.GetCourseById(r.Context(), courseId)
 	if err != nil {
-		slog.Info(fmt.Sprintf("1.3 course id %s", err.Error()))
 		return err
 	}
 

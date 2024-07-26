@@ -4,8 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
-	"log/slog"
 	"math"
 	"slices"
 	"sort"
@@ -24,6 +22,8 @@ type HandicapStore interface {
 	GetIndxByUserId(ctx context.Context, userId int) (float64, error)
 	SaveHandicap(ctx context.Context, userId int, rounds [20]*Round, date time.Time) error
 }
+
+var ErrNotEnoughRounds = errors.New("not enough rounds for handicap")
 
 func (pg PostgresStore) GetChartDataForUser(ctx context.Context, userId, limit int) (*ChartData, error) {
 	query := `
@@ -99,7 +99,6 @@ func (pg PostgresStore) GetIndxByUserId(ctx context.Context, userId int) (float6
 
 	var indx float64
 	err := pg.db.QueryRowContext(ctx, query, userId).Scan(&indx)
-
 	if errors.Is(err, sql.ErrNoRows) {
 		return 0, nil
 	}
@@ -119,6 +118,9 @@ func (pg PostgresStore) SaveHandicap(ctx context.Context, userId int, rounds [20
 
 	indx, err := CalculateHandicap(rounds)
 	if err != nil {
+		if errors.Is(err, ErrNotEnoughRounds) {
+			return nil
+		}
 		return err
 	}
 	tx := ctx.Value(transactionKey).(*sql.Tx)
@@ -135,10 +137,9 @@ func (pg PostgresStore) SaveHandicap(ctx context.Context, userId int, rounds [20
 func CalculateHandicap(rounds [20]*Round) (float64, error) {
 	handicap := float64(0)
 	roundsCount := countRounds(rounds)
-	slog.Info(fmt.Sprintf("COUNT %d", roundsCount))
 
 	if roundsCount < 3 {
-		return -1, fmt.Errorf("minimum 3 rounds needed. round count: %d", roundsCount)
+		return 0, ErrNotEnoughRounds
 	}
 
 	var scoreDiffs []float64

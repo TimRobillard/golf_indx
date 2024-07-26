@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log/slog"
 	"strconv"
 	"time"
 
@@ -189,6 +188,9 @@ func (pg PostgresStore) GetCalcRoundsByUserId(ctx context.Context, userId int) (
 
 	rows, err := pg.db.QueryContext(ctx, insertQuery, userId)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return rounds, nil
+		}
 		return rounds, err
 	}
 
@@ -317,7 +319,6 @@ func (r Round) CalcScore() float64 {
 	for _, h := range r.Back {
 		score += h
 	}
-	slog.Info(fmt.Sprintf("Score: %d", score))
 	return float64(score)
 }
 

@@ -47,8 +47,6 @@ func (pg PostgresStore) CreateUser(ctx context.Context, username, password strin
 		return nil, err
 	}
 
-	fmt.Printf("Hashed pwd %s", string(bytes))
-
 	var id int
 	err = pg.db.QueryRowContext(ctx, query, username, string(bytes)).Scan(&id)
 
