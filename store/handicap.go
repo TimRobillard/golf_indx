@@ -100,6 +100,10 @@ func (pg PostgresStore) GetIndxByUserId(ctx context.Context, userId int) (float6
 	var indx float64
 	err := pg.db.QueryRowContext(ctx, query, userId).Scan(&indx)
 
+	if errors.Is(err, sql.ErrNoRows) {
+		return 0, nil
+	}
+
 	return indx, err
 }
 
