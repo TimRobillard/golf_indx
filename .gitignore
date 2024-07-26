@@ -3,3 +3,4 @@ bin
 tmp
 *.code-workspace
 views/**/*_templ.go
+public/styles.css

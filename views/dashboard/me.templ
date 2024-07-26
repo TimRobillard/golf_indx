@@ -64,7 +64,10 @@ templ Me(u *store.UIUser, rounds [20]*store.CalcRound) {
 									<i class="fa-solid fa-spinner text-4xl text-green-800"></i>
 								</div>
 								<canvas id="myChart" class="hidden"></canvas>
-								<span id="chart-no-data" class="hidden text-lg text-slate-500 text-center">No Data Found</span>
+								<div id="chart-no-data" class="hidden text-xl text-slate-500 text-center flex-col gap-1">
+									<h4 class="text-black font-bold">No Data Found</h4>
+									<p class="text-md px-4">Minimum 3 rounds required to calculate your IndX</p>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -81,56 +84,58 @@ templ Me(u *store.UIUser, rounds [20]*store.CalcRound) {
 					const response = await fetch(`${appUrl}/dashboard/chart/me`);
 					const data = await response.json();
 					if (data && data.data.length) {
-					const ctx = document.getElementById('myChart');
-					new Chart(ctx, {
-						type: 'line',
-						data: {
-							labels: data.labels,
-							datasets: [{
-								label: '',
-								data: data.data,
-								borderWidth: 2,
-							}]
-						},
-						responsive: true,
-						options: {
-							fill: {
-								target: 'origin',
-								above: 'rgb(22, 101, 52)',
+						const ctx = document.getElementById('myChart');
+						new Chart(ctx, {
+							type: 'line',
+							data: {
+								labels: data.labels,
+								datasets: [{
+									label: '',
+									data: data.data,
+									borderWidth: 2,
+								}]
 							},
-							pointBackgroundColor: '#F2F2F2',
-							pointBorderColor: '#333',
-							pointRadius: 4,
-							borderColor: 'rgb(22, 101, 52)',
 							responsive: true,
-							scales: {
-								y: {
-									beginAtZero: true,
-									min: data.min, max: data.max
-								}
-							},
-							elements: {
-								line: {
-								tension: 0.2
+							options: {
+								fill: {
+									target: 'origin',
+									above: 'rgb(22, 101, 52)',
 								},
-							},
-							layout: {
-								padding: 20
-							},
-							plugins: {
-								legend: {
-									display: false,
+								pointBackgroundColor: '#F2F2F2',
+								pointBorderColor: '#333',
+								pointRadius: 4,
+								borderColor: 'rgb(22, 101, 52)',
+								responsive: true,
+								scales: {
+									y: {
+										beginAtZero: true,
+										min: data.min, max: data.max
+									}
+								},
+								elements: {
+									line: {
+									tension: 0.2
+									},
+								},
+								layout: {
+									padding: 20
+								},
+								plugins: {
+									legend: {
+										display: false,
+									}
 								}
 							}
-						}
-					});
-					ctx.classList.remove('hidden')
+						});
+						ctx.classList.remove('hidden')
 					} else {
-						document.getElementById('chart-no-data').classList.remove('hidden')
+						document.getElementById('chart-no-data').classList.remove('hidden');
+						document.getElementById('chart-no-data').classList.add("flex");
 					}
 				} catch(e) {
 					console.log(e)
 						document.getElementById('chart-no-data').classList.remove('hidden')
+						document.getElementById('chart-no-data').classList.add("flex");
 				} finally {
 					document.getElementById('chart-spinner').remove()
 				}
