@@ -27,7 +27,7 @@ func GetUserFromRequest(r *http.Request, us store.UserStore) (*store.UIUser, err
 	if !ok {
 		return nil, fmt.Errorf("no user id found in context")
 	}
-	return us.GetUIUserById(userId)
+	return us.GetUIUserById(r.Context(), userId)
 }
 
 func AddUserToContext(next http.Handler) http.Handler {

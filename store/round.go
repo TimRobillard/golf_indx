@@ -33,6 +33,7 @@ type RoundStore interface {
 	CreateRound(ctx context.Context, u *UIUser, c Course, f, b [9]int, d string) (*Round, error)
 	GetRoundsForUser(ctx context.Context, u *UIUser) ([20]*Round, error)
 	GetCalcRoundsByUserId(ctx context.Context, userId int) ([20]*CalcRound, error)
+	GetLastRoundScoreByUserId(ctx context.Context, userId int) (int, error)
 }
 
 type Transaction string
@@ -208,6 +209,31 @@ func (pg PostgresStore) GetCalcRoundsByUserId(ctx context.Context, userId int) (
 	}
 
 	return rounds, nil
+}
+
+func (pg PostgresStore) GetLastRoundScoreByUserId(ctx context.Context, userId int) (int, error) {
+	query := `
+	SELECT 
+		front, back
+	FROM round 
+	WHERE user_id = $1
+	ORDER BY r.date DESC, r.id DESC
+	LIMIT 1;`
+
+	var front, back []int32
+	err := pg.db.QueryRowContext(ctx, query, userId).Scan((*pq.Int32Array)(&front), (*pq.Int32Array)(&back))
+
+	if len(front) != 9 || len(back) != 0 {
+		return 0, err
+	}
+
+	score := 0
+	for i := 0; i < 9; i++ {
+		score += int(front[i])
+		score += int(back[i])
+	}
+
+	return score, err
 }
 
 func calcScore(f, b []int32) (string, error) {

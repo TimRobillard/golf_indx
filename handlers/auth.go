@@ -38,7 +38,7 @@ func (a authHandler) handlePostLogin(w http.ResponseWriter, r *http.Request) err
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 
-	user, err := a.us.GetUserByUsername(username)
+	user, err := a.us.GetUserByUsername(r.Context(), username)
 
 	if err != nil {
 		return errors.UnauthorizedError("unauthorized", nil)
@@ -74,7 +74,7 @@ func (a authHandler) handlePostRegister(w http.ResponseWriter, r *http.Request) 
 		return errors.BadRequestError("username and password required", nil)
 	}
 
-	user, err := a.us.CreateUser(username, password)
+	user, err := a.us.CreateUser(r.Context(), username, password)
 
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate key") {

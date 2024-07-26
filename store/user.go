@@ -1,7 +1,9 @@
 package store
 
 import (
+	"context"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
@@ -20,18 +22,19 @@ type UIUser struct {
 	Id         int
 	Username   string `json:"username"`
 	Indx       string `json:"indx"`
+	LastScore  string `json:"lastScore"`
 	ProfilePic string `json:"profilePic"`
 }
 
 type UserStore interface {
-	CreateUser(string, string) (*User, error)
-	GetUserById(int) (*User, error)
-	GetUIUserById(int) (*UIUser, error)
-	GetUserByUsername(string) (*User, error)
-	DeleteUser(int) error
+	CreateUser(ctx context.Context, username, password string) (*User, error)
+	GetUserById(ctx context.Context, id int) (*User, error)
+	GetUIUserById(ctx context.Context, id int) (*UIUser, error)
+	GetUserByUsername(ctx context.Context, id string) (*User, error)
+	DeleteUser(ctx context.Context, id int) error
 }
 
-func (pg PostgresStore) CreateUser(username, password string) (*User, error) {
+func (pg PostgresStore) CreateUser(ctx context.Context, username, password string) (*User, error) {
 	username = strings.ToLower(username)
 	username = strings.Trim(username, " ")
 
@@ -47,7 +50,7 @@ func (pg PostgresStore) CreateUser(username, password string) (*User, error) {
 	fmt.Printf("Hashed pwd %s", string(bytes))
 
 	var id int
-	err = pg.db.QueryRow(query, username, string(bytes)).Scan(&id)
+	err = pg.db.QueryRowContext(ctx, query, username, string(bytes)).Scan(&id)
 
 	user := &User{
 		Id:       id,
@@ -57,39 +60,54 @@ func (pg PostgresStore) CreateUser(username, password string) (*User, error) {
 	return user, err
 }
 
-func (pg PostgresStore) GetUIUserById(id int) (*UIUser, error) {
-	u, err := pg.GetUserById(id)
+func (pg PostgresStore) GetUIUserById(ctx context.Context, id int) (*UIUser, error) {
+	u, err := pg.GetUserById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	indx, err := pg.GetIndxByUserId(ctx, u.Id)
+	if err != nil {
+		return nil, err
+	}
+	lastRound, err := pg.GetLastRoundScoreByUserId(ctx, u.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	return u.ToUI(), nil
+	c := cases.Title(language.Und)
+	return &UIUser{
+		Id:         u.Id,
+		Username:   c.String(u.Username),
+		Indx:       fmt.Sprintf("%.1f", indx),
+		LastScore: strconv.Itoa(lastRound),
+		ProfilePic: u.ProfilePic,
+	}, nil
 }
 
-func (pg PostgresStore) GetUserById(id int) (*User, error) {
+func (pg PostgresStore) GetUserById(ctx context.Context, id int) (*User, error) {
 	query := `SELECT id, username, password, profile_pic
 	FROM users WHERE id = $1 AND is_deleted = false;`
 
 	user := new(User)
-	err := pg.db.QueryRow(query, id).Scan(&user.Id, &user.Username, &user.password, &user.ProfilePic)
+	err := pg.db.QueryRowContext(ctx, query, id).Scan(&user.Id, &user.Username, &user.password, &user.ProfilePic)
 
 	return user, err
 }
 
-func (pg PostgresStore) GetUserByUsername(username string) (*User, error) {
+func (pg PostgresStore) GetUserByUsername(ctx context.Context, username string) (*User, error) {
 	query := `SELECT id, username, password, profile_pic
 	FROM users WHERE username = $1 AND is_deleted = false;`
 
 	user := new(User)
-	err := pg.db.QueryRow(query, username).Scan(&user.Id, &user.Username, &user.password, &user.ProfilePic)
+	err := pg.db.QueryRowContext(ctx, query, username).Scan(&user.Id, &user.Username, &user.password, &user.ProfilePic)
 
 	return user, err
 }
 
-func (pg PostgresStore) DeleteUser(id int) error {
+func (pg PostgresStore) DeleteUser(ctx context.Context, id int) error {
 	query := `UPDATE users SET is_deleted = true WHERE id = $1;`
 
-	_, err := pg.db.Exec(query, id)
+	_, err := pg.db.ExecContext(ctx, query, id)
 
 	return err
 }
@@ -97,16 +115,6 @@ func (pg PostgresStore) DeleteUser(id int) error {
 func (u User) ValidatePassword(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(u.password), []byte(password))
 	return err == nil
-}
-
-func (u User) ToUI() *UIUser {
-	c := cases.Title(language.Und)
-	return &UIUser{
-		Id:         u.Id,
-		Username:   c.String(u.Username),
-		Indx:       "20.3",
-		ProfilePic: u.ProfilePic,
-	}
 }
 
 func (u UIUser) ScoreCardName() string {

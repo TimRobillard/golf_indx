@@ -38,7 +38,7 @@ templ Me(u *store.UIUser, rounds [20]*store.CalcRound) {
 							@components.ProfilePic(u.Indx, &u.ProfilePic)
 							<div>
 								<span class="block text-2xl font-semibold">{ u.Username }</span>
-								<span class="block text-slate-700">Low round 92</span>
+								<span class="block text-slate-700">Latest round { u.LastScore }</span>
 							</div>
 						</div>
 						<div class="rounded-3xl col-start-1 col-end-4 row-start-4 row-end-6 md:col-start-4 md:col-end-6 md:row-start-1 md:row-end-4">

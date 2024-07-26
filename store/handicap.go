@@ -21,6 +21,7 @@ type ChartData struct {
 
 type HandicapStore interface {
 	GetChartDataForUser(ctx context.Context, userId, limit int) (*ChartData, error)
+	GetIndxByUserId(ctx context.Context, userId int) (float64, error)
 	SaveHandicap(ctx context.Context, userId int, rounds [20]*Round, date time.Time) error
 }
 
@@ -80,6 +81,20 @@ func (pg PostgresStore) GetChartDataForUser(ctx context.Context, userId, limit i
 	}
 
 	return chart, nil
+}
+
+func (pg PostgresStore) GetIndxByUserId(ctx context.Context, userId int) (float64, error) {
+	query := `
+	SELECT indx 
+	FROM handicap
+	WHERE user_id = $1
+	ORDER BY date DESC, id DESC
+	LIMIT 1;`
+
+	var indx float64
+	err := pg.db.QueryRowContext(ctx, query, userId).Scan(&indx)
+
+	return indx, err
 }
 
 func (pg PostgresStore) SaveHandicap(ctx context.Context, userId int, rounds [20]*Round, date time.Time) error {

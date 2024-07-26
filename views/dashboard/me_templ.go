@@ -57,7 +57,20 @@ func Me(u *store.UIUser, rounds [20]*store.CalcRound) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span> <span class=\"block text-slate-700\">Low round 92</span></div></div><div class=\"rounded-3xl col-start-1 col-end-4 row-start-4 row-end-6 md:col-start-4 md:col-end-6 md:row-start-1 md:row-end-4\"><div class=\"flex flex-col bg-white rounded-3xl p-4 pr-0.5 md:h-full\"><span class=\"font-semibold text-lg\">Calculated Rounds</span><div class=\"md:overflow-y-scroll\"><ul class=\"md:h-full sm:overflow-y-scroll flex flex-col gap-2\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span> <span class=\"block text-slate-700\">Latest round ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(u.LastScore)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/dashboard/me.templ`, Line: 41, Col: 69}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div></div><div class=\"rounded-3xl col-start-1 col-end-4 row-start-4 row-end-6 md:col-start-4 md:col-end-6 md:row-start-1 md:row-end-4\"><div class=\"flex flex-col bg-white rounded-3xl p-4 pr-0.5 md:h-full\"><span class=\"font-semibold text-lg\">Calculated Rounds</span><div class=\"md:overflow-y-scroll\"><ul class=\"md:h-full sm:overflow-y-scroll flex flex-col gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
