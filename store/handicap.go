@@ -86,6 +86,10 @@ func (pg PostgresStore) GetChartDataForUser(ctx context.Context, userId, limit i
 		}
 	}
 
+	// Add padding to min + max
+	chart.Max = chart.Max + 1
+	chart.Min = chart.Min - 1
+
 	return chart, nil
 }
 
