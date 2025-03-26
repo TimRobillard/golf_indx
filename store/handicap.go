@@ -170,22 +170,15 @@ func CalculateHandicap(rounds [20]*Round) (float64, error) {
 		handicap = scoreDiffs[0]
 	case 6:
 		handicap = average(scoreDiffs[:1]) - 1
-	case 7:
-	case 8:
+	case 7, 8:
 		handicap = average(scoreDiffs[:1])
-	case 9:
-	case 10:
-	case 11:
+	case 9, 10, 11:
 		handicap = average(scoreDiffs[:2])
-	case 12:
-	case 13:
-	case 14:
+	case 12, 13, 14:
 		handicap = average(scoreDiffs[:3])
-	case 15:
-	case 16:
+	case 15, 16:
 		handicap = average(scoreDiffs[:4])
-	case 17:
-	case 18:
+	case 17, 18:
 		handicap = average(scoreDiffs[:5])
 	case 19:
 		handicap = average(scoreDiffs[:6])
